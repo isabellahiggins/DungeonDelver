@@ -1,19 +1,21 @@
 # Dungeon Delver (team 2): Celbridge / Deno review
 
-Reviewed 2026-10-05 by Matt, after the 11:00 deadline.
+Reviewed 2026-10-05 by Matt. The week 3 deadline was extended from 11:00 to 13:00 for this first week.
 
-**Code reviewed:** `main` at `e95b74f` (Mon 5 Oct 03:40, Sean Kelly: "added basic script for 8 directional player
-movement").
+**Code reviewed:** `main` at `46c22ce` (Mon 5 Oct 11:23: "Created Basic Enemy Spawner Script").
+
+**New since the first look:** `enemyspawner.ts`, an `Enemy` sprite and an `EnemySpawner` scene (see issue 3).
 
 ## Summary
 
-The repo had a Tiled map (`testLevel.tmx`) and its art, and, by the deadline, one piece of code: a `Player`
-class with 8-direction WASD movement (`Player.ts`). It's now set up as a Phaser 4 + TypeScript project with
+The repo had a Tiled map (`testLevel.tmx`) and its art, and, by the deadline, two pieces of code: a `Player`
+class with 8-direction WASD movement (`Player.ts`), and the start of an enemy spawner (`enemyspawner.ts`). It's now set up as a Phaser 4 + TypeScript project with
 Celbridge's Deno tools. `src/main.ts` is a small placeholder scene that shows the tileset image, to prove the build
 works. Replace it with the real game.
 
-The build has **1 TypeScript error** (in `Player.ts`, a one-word fix) and **no lint warnings**. The placeholder
-runs correctly. `Player` isn't used by the game yet (see issue 2).
+The build has **2 TypeScript errors** (the same one-word fix, in `Player.ts` and `enemyspawner.ts`) and **1 lint
+warning** (`EnemySpawner` is never used). The placeholder runs correctly. Neither `Player` nor `EnemySpawner` is
+used by the game yet (see issues 2 and 3).
 
 The main work left before the map can be used in the game is in Tiled (see issue 1).
 
@@ -23,7 +25,7 @@ The main work left before the map can be used in the game is in Tiled (see issue
 |---|---|
 | Moved `assets/` to `public/assets/` | Everything in `public/` is copied into `dist/` by the build, so the game can load it as `assets/...`. |
 | Updated the 19 image paths in `testLevel.tmx` to `public/assets/...` | So Tiled still finds the images. The `.tmx` itself didn't move. |
-| Moved `Player.ts` to `src/Player.ts` | All the game's code goes in `src/`, where the build type checks and lints it. |
+| Moved `Player.ts` to `src/Player.ts`, and `enemyspawner.ts` to `src/enemyspawner.ts` | All the game's code goes in `src/`, where the build type checks and lints it. |
 | Added a `.gitignore` | There wasn't one. It ignores `dist/`, `test_output/`, `.celbridge/` and `.DS_Store`. |
 | Added the Deno build, Celbridge tools and a placeholder game | See `CELBRIDGE.md`. |
 | Added `tools/tmx_to_json.ts` (`deno task map`, and a **map** button in the console) | Converts the Tiled map to JSON for Phaser, without needing Tiled installed. |
@@ -122,7 +124,43 @@ Holding W and D sets both velocities to 100, so the player moves diagonally at a
 same speed in every direction, scale the velocity: `this.body!.velocity.normalize().scale(this.speed)` after
 setting both.
 
-### 3. The Celbridge preview
+### 3. `src/enemyspawner.ts`
+
+A good start on enemies: `Enemy` follows the same pattern as `Player` (an arcade sprite that adds itself to the
+scene and to physics), which keeps the two easy to compare.
+
+**a) Type error: `update()` needs `override`**
+
+```
+TS4114: This member must have an 'override' modifier because it overrides a member in the base class 'Scene'.
+```
+
+The same fix as `Player`: `override update() {`. Or delete the empty `update()` for now, since it does nothing.
+
+**b) Nothing can use it yet (the lint warning)**
+
+Neither class is `export`ed, so no other file can import them, and nothing starts the `EnemySpawner` scene. Add
+`export` in front of each `class`, then either add `EnemySpawner` to the `scene` list in the game config in
+`src/main.ts`, or (simpler, see c) call the spawner from the game's own scene.
+
+**c) Should the spawner be a scene?**
+
+A Phaser `Scene` is a whole screen of the game, with its own camera and objects. Enemies spawned in
+`EnemySpawner` wouldn't be in the same scene as the player and the map, so they couldn't collide with them.
+
+*Recommended:* make `EnemySpawner` a plain class that's given the game scene, e.g.
+`constructor(private scene: Phaser.Scene) {}`, and have `spawnEnemy()` call `new Enemy(this.scene, x, y)`. The
+game scene creates one spawner in `create()`, and puts the enemies in a `this.physics.add.group()` so it can
+add colliders between the player and all of them at once.
+
+**d) Before an enemy can appear**
+
+- an image needs loading with the key `"enemy"`, in a scene's `preload()`
+- arcade physics needs turning on (the same as for `Player`, issue 2b)
+- `spawnEnemy()` always uses the centre of the canvas. Passing `x` and `y` in, or picking spawn points from an
+  object layer in the Tiled map, would let enemies appear in different places
+
+### 4. The Celbridge preview
 
 Celbridge's side preview loads the game, including its images and sounds, without needing a separate web server
 (checked in Celbridge on 5 Oct).
