@@ -1,14 +1,19 @@
 # Dungeon Delver (team 2): Celbridge / Deno review
 
-Reviewed 2026-10-05 by Matt.
+Reviewed 2026-10-05 by Matt, after the 11:00 deadline.
+
+**Code reviewed:** `main` at `e95b74f` (Mon 5 Oct 03:40, Sean Kelly: "added basic script for 8 directional player
+movement").
 
 ## Summary
 
-The repo had a Tiled map (`testLevel.tmx`) and its art, but no code yet. It's now set up as a Phaser 4 +
-TypeScript project with Celbridge's Deno tools. `src/main.ts` is a small placeholder scene that shows the tileset
-image, to prove the build works. Replace it with the real game.
+The repo had a Tiled map (`testLevel.tmx`) and its art, and, by the deadline, one piece of code: a `Player`
+class with 8-direction WASD movement (`Player.ts`). It's now set up as a Phaser 4 + TypeScript project with
+Celbridge's Deno tools. `src/main.ts` is a small placeholder scene that shows the tileset image, to prove the build
+works. Replace it with the real game.
 
-The build has **no TypeScript errors** and **no lint warnings**, and the placeholder runs correctly.
+The build has **1 TypeScript error** (in `Player.ts`, a one-word fix) and **no lint warnings**. The placeholder
+runs correctly. `Player` isn't used by the game yet (see issue 2).
 
 The main work left before the map can be used in the game is in Tiled (see issue 1).
 
@@ -18,6 +23,7 @@ The main work left before the map can be used in the game is in Tiled (see issue
 |---|---|
 | Moved `assets/` to `public/assets/` | Everything in `public/` is copied into `dist/` by the build, so the game can load it as `assets/...`. |
 | Updated the 19 image paths in `testLevel.tmx` to `public/assets/...` | So Tiled still finds the images. The `.tmx` itself didn't move. |
+| Moved `Player.ts` to `src/Player.ts` | All the game's code goes in `src/`, where the build type checks and lints it. |
 | Added a `.gitignore` | There wasn't one. It ignores `dist/`, `test_output/`, `.celbridge/` and `.DS_Store`. |
 | Added the Deno build, Celbridge tools and a placeholder game | See `CELBRIDGE.md`. |
 | Added `tools/tmx_to_json.ts` (`deno task map`, and a **map** button in the console) | Converts the Tiled map to JSON for Phaser, without needing Tiled installed. |
@@ -81,7 +87,41 @@ The layers are called `Tile Layer 1`, `Tile Layer 2` and `Tile Layer 3`. Phaser 
 
 *Recommended:* rename them to say what they hold, e.g. `Ground`, `Decorations`, `Paths`.
 
-### 2. Not yet checked inside Celbridge itself
+### 2. `src/Player.ts`
+
+A clear, well-commented start: a `Phaser.Physics.Arcade.Sprite` subclass, with WASD movement and no gravity for a
+top-down game.
+
+**a) Type error: `update()` needs `override`**
+
+```
+TS4114: This member must have an 'override' modifier because it overrides a member in the base class 'Sprite'.
+```
+
+`Sprite` already has an `update()` method, and this project's TypeScript settings ask for `override` whenever a
+method replaces one from the base class. That makes it obvious which methods Phaser calls. The fix:
+
+```ts
+override update() {
+```
+
+**b) It isn't used yet**
+
+Nothing creates a `Player`. To use it, the game needs:
+
+- arcade physics turned on, in the game config in `src/main.ts`:
+  `physics: { default: "arcade", arcade: { gravity: { x: 0, y: 0 } } }`
+- an image loaded with the key `"player"`, in a scene's `preload()`
+- a scene that creates it (`this.player = new Player(this, x, y)`) and calls `this.player.update()` from the
+  scene's own `update()`
+
+**c) Diagonal movement is faster**
+
+Holding W and D sets both velocities to 100, so the player moves diagonally at about 141 (√2 × 100). To keep the
+same speed in every direction, scale the velocity: `this.body!.velocity.normalize().scale(this.speed)` after
+setting both.
+
+### 3. Not yet checked inside Celbridge itself
 
 The build was tested through a local web server, not in Celbridge's side preview.
 
