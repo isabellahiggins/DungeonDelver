@@ -28,6 +28,7 @@ The main work left before the map can be used in the game is in Tiled (see issue
 | Added the Deno build, Celbridge tools and a placeholder game | See `CELBRIDGE.md`. |
 | Added `tools/tmx_to_json.ts` (`deno task map`, and a **map** button in the console) | Converts the Tiled map to JSON for Phaser, without needing Tiled installed. |
 | Added `deno task serve` and `README_deno_tooling.md` | For previewing in a browser, and working without Celbridge. |
+| Added `public/fit-to-window.css` | Scales the page to fit the window or Celbridge's preview panel, so the game is never cut off. |
 
 ## Working without Celbridge
 
@@ -121,13 +122,18 @@ Holding W and D sets both velocities to 100, so the player moves diagonally at a
 same speed in every direction, scale the velocity: `this.body!.velocity.normalize().scale(this.speed)` after
 setting both.
 
-### 3. Not yet checked inside Celbridge itself
+### 3. The Celbridge preview
 
-The build was tested through a local web server, not in Celbridge's side preview.
+Celbridge's side preview loads the game, including its images and sounds, without needing a separate web server
+(checked in Celbridge on 5 Oct).
 
-*Recommended:* open `DungeonDelver.celbridge` and check the placeholder appears in the side preview, with the
-tileset image. If it shows a blank screen, preview it
-with `deno task serve` and a browser instead (see `README_deno_tooling.md`).
+The page now also scales to fit the preview panel. `public/fit-to-window.css` (linked from `public/index.html`)
+shrinks the game to fit as the panel is resized, keeping its shape, so nothing is cut off. Mouse clicks still land
+in the right place. It's the last stylesheet on the page, so it's easy to remove if you'd rather lay the page out
+yourselves.
+
+*Recommended:* nothing needed. If you change the page's layout (e.g. add a heading or a panel), check it still
+fits a narrow panel.
 
 ## Files added for the Deno build
 
