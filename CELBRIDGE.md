@@ -1,6 +1,6 @@
 # Dungeon Delver in Celbridge (Deno)
 
-A Phaser 4 + TypeScript project, built with Deno. `src/main.ts` is a placeholder scene that shows
+A Phaser 4 + TypeScript project, built with Deno. Not using Celbridge? See `README_deno_tooling.md`. `src/main.ts` is a placeholder scene that shows
 `public/assets/Tilemap_Flat.png`, to prove the build works. Replace it with the real game.
 
 ## Running it in Celbridge
@@ -58,3 +58,5 @@ You never need to edit these:
 - `deno.json`: the Deno tasks and settings
 - `build.ts`, `tools/test_report.ts`: the build and the test report
 - `tools/tmx_to_json.ts`: converts Tiled maps to JSON (`deno task map`)
+- `README_deno_tooling.md`: how to do all this without Celbridge
+- `README_deno_install.md`: how to install Deno on Linux, macOS and Windows

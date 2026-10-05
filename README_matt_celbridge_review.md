@@ -21,6 +21,22 @@ The main work left before the map can be used in the game is in Tiled (see issue
 | Added a `.gitignore` | There wasn't one. It ignores `dist/`, `test_output/`, `.celbridge/` and `.DS_Store`. |
 | Added the Deno build, Celbridge tools and a placeholder game | See `CELBRIDGE.md`. |
 | Added `tools/tmx_to_json.ts` (`deno task map`, and a **map** button in the console) | Converts the Tiled map to JSON for Phaser, without needing Tiled installed. |
+| Added `deno task serve` and `README_deno_tooling.md` | For previewing in a browser, and working without Celbridge. |
+
+## Working without Celbridge
+
+`README_deno_tooling.md` explains how to get the same set-up without Celbridge. That matters most for **Linux**
+users, as there's no Linux version of Celbridge yet, and `README_deno_install.md` covers installing Deno
+on Linux (as well as macOS and Windows). It also
+suits anyone working in VS Code. The
+project only needs Deno (no Node.js or npm), which runs on Windows, macOS and Linux:
+
+- `deno task dev` builds, tests, and rebuilds `dist/` every time a file in `src/`, `public/` or `tests/` is saved
+- `deno task serve`, in a second terminal, serves the game at http://127.0.0.1:8000. Then refresh the browser
+  after each rebuild
+
+The game needs the server: opened straight from disk (`file://`), browsers block Phaser from loading its images and maps,
+so it shows a blank screen.
 
 ## Issues and recommended actions
 
@@ -70,10 +86,11 @@ The layers are called `Tile Layer 1`, `Tile Layer 2` and `Tile Layer 3`. Phaser 
 The build was tested through a local web server, not in Celbridge's side preview.
 
 *Recommended:* open `DungeonDelver.celbridge` and check the placeholder appears in the side preview, with the
-tileset image.
+tileset image. If it shows a blank screen, preview it
+with `deno task serve` and a browser instead (see `README_deno_tooling.md`).
 
 ## Files added for the Deno build
 
-`DungeonDelver.celbridge` (replaced), `CELBRIDGE.md`, `terminal.console`, `deno.json`, `deno.lock`, `build.ts`,
+`DungeonDelver.celbridge` (replaced), `CELBRIDGE.md`, `README_deno_tooling.md`, `README_deno_install.md`, `terminal.console`, `deno.json`, `deno.lock`, `build.ts`,
 `tools/test_report.ts`, `tools/tmx_to_json.ts`, `tests/README.md`, `.gitignore`, and the placeholder game in
 `src/main.ts`, `public/index.html` and `public/styles.css`. See `CELBRIDGE.md` for how to use them.
