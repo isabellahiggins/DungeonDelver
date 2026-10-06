@@ -39,14 +39,17 @@ export default class LevelScene extends Phaser.Scene {
 
      create(): void{
           this.createMap();
-          this.cameras.main.setZoom(0.230);
+        //   this.cameras.main.setZoom(0.230);
 
-		const x = this.sys.game.canvas.width / 2;
-		const y = this.sys.game.canvas.height / 2;
+		const width = this.sys.game.canvas.width;
+		const height = this.sys.game.canvas.height;
 
-		const spawn : SpawnPosition = new SpawnPosition(x, y);
+		const spawn1 : SpawnPosition = new SpawnPosition(width / 2, 0);
+		// const spawn2 : SpawnPosition = new SpawnPosition(x, y);
+		// const spawn3 : SpawnPosition = new SpawnPosition(x, y);
+		// const spawn4 : SpawnPosition = new SpawnPosition(x, y);
 
-		const enemySpawner = new EnemySpawner(this, spawn);
+		const enemySpawner = new EnemySpawner(this, spawn1);
 
 		enemySpawner.spawnEnemy(1);
 
