@@ -31,7 +31,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         };
     }
 
-    update() {
+    override update() {
         this.setVelocity(0);
 
         // up + down movement

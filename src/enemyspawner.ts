@@ -21,6 +21,6 @@ class EnemySpawner extends Phaser.Scene {
 		new Enemy(this, x, y);
 	}
 
-	update(){
+	override update(){
 	}
 }
