@@ -9,6 +9,7 @@ export default class LevelScene extends Phaser.Scene {
      private map!: Phaser.Tilemaps.Tilemap;
      private ground!: Phaser.Tilemaps.TilemapLayer;
      private deco!: Phaser.Tilemaps.TilemapLayer;
+	 private enemySpawner! : EnemySpawner;
      
      constructor(){
           super("LevelScene");
@@ -37,21 +38,23 @@ export default class LevelScene extends Phaser.Scene {
           this.ground.setCollisionByProperty({ collides: true });
      }
 
-     create(): void{
-          this.createMap();
-        //   this.cameras.main.setZoom(0.230);
-
+	 private createSpawner(){
 		const width = this.sys.game.canvas.width;
 		const height = this.sys.game.canvas.height;
 
 		const spawn1 : SpawnPosition = new SpawnPosition(width / 2, 0);
-		// const spawn2 : SpawnPosition = new SpawnPosition(x, y);
-		// const spawn3 : SpawnPosition = new SpawnPosition(x, y);
-		// const spawn4 : SpawnPosition = new SpawnPosition(x, y);
+		const spawn2 : SpawnPosition = new SpawnPosition(width, height / 2);
+		const spawn3 : SpawnPosition = new SpawnPosition(width / 2, height);
+		const spawn4 : SpawnPosition = new SpawnPosition(0, height / 2);
 
-		const enemySpawner = new EnemySpawner(this, spawn1);
+		this.enemySpawner = new EnemySpawner(this, spawn1, spawn2, spawn3, spawn4);
+	 }
 
-		enemySpawner.spawnEnemy(1);
+     create(): void{
+          this.createMap();
+		this.createSpawner();
+		
+		this.enemySpawner.spawnEnemy(1);
 
      }
 
