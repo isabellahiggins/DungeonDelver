@@ -1,7 +1,9 @@
 import * as Phaser from "phaser";
 import{ MAP_KEY, MAP_FILE, GROUND_TILESET_NAME,
      GROUND_KEY, GROUND_FILE,DECO_TILESET_NAME,
-     DECO_KEY,DECO_FILE,GROUND_LAYER,DECO_LAYER} from "../assets.ts";
+     DECO_KEY,DECO_FILE,GROUND_LAYER,DECO_LAYER,
+	 ENEMY_KEY, ENEMY_FILE} from "../assets.ts";
+import {EnemySpawner, SpawnPosition} from "../enemyspawner.ts";
 
 export default class LevelScene extends Phaser.Scene {
      private map!: Phaser.Tilemaps.Tilemap;
@@ -16,6 +18,7 @@ export default class LevelScene extends Phaser.Scene {
           this.load.tilemapTiledJSON(MAP_KEY, MAP_FILE);
           this.load.image(GROUND_KEY, GROUND_FILE);
           this.load.image(DECO_KEY, DECO_FILE);
+		  this.load.image(ENEMY_KEY, ENEMY_FILE);
      }
 
      private createMap(): void{
@@ -37,6 +40,16 @@ export default class LevelScene extends Phaser.Scene {
      create(): void{
           this.createMap();
           this.cameras.main.setZoom(0.230);
+
+		const x = this.sys.game.canvas.width / 2;
+		const y = this.sys.game.canvas.height / 2;
+
+		const spawn : SpawnPosition = new SpawnPosition(x, y);
+
+		const enemySpawner = new EnemySpawner(this, spawn);
+
+		enemySpawner.spawnEnemy(1);
+
      }
 
 }

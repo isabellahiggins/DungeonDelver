@@ -1,11 +1,13 @@
 import Phaser from 'phaser';
+import{ENEMY_KEY, ENEMY_FILE} from "./assets.ts";
 
 class Enemy extends Phaser.Physics.Arcade.Sprite {
 	constructor(scene: Phaser.Scene, x: number, y: number) {
-		super(scene, x, y, 'enemy');
+		super(scene, x, y, ENEMY_KEY);
+		this.setScale(1)
 		scene.add.existing(this);
-		scene.physics.add.existing(this);
-		this.setCollideWorldBounds(true);
+		// scene.physics.add.existing(this);
+		//this.setCollideWorldBounds(true);
 	}
 }
 
@@ -31,14 +33,14 @@ export class EnemySpawner{
 	private locationArray : SpawnPosition[];
 	private scene : Phaser.Scene;
 
-	constructor(scene : Phaser.Scene, locationArray : SpawnPosition[]){
+	constructor(scene : Phaser.Scene, ...locationArray : SpawnPosition[]){
 		this.locationArray = locationArray;
 		this.scene = scene;
 	}
 
 	spawnEnemy(numEnemies : integer){
 		for(let index = 0; index < numEnemies; index++){
-			let r = Math.random() * (this.locationArray.length - 1) + 1;
+			let r = Math.random() * (this.locationArray.length - 1);
 			
 			new Enemy(this.scene, this.locationArray[r].getPositionX(), this.locationArray[r].getPositionY());
 		}

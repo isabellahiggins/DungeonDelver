@@ -13,3 +13,7 @@ export const DECO_FILE = "assets/deco/Deco_Sheet.png"
 // tile layers
 export const GROUND_LAYER = "Ground";
 export const DECO_LAYER = "Deco";
+
+// Enemy
+export const ENEMY_KEY = "enemy";
+export const ENEMY_FILE = "assets/DebugEnemy.png";
