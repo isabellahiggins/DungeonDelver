@@ -9,18 +9,38 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 	}
 }
 
-class EnemySpawner extends Phaser.Scene {
-	constructor() {
-		super('EnemySpawner');
+export class SpawnPosition{
+	private x : number;
+	private y : number;
+
+	constructor(x : number, y : number){
+		this.x = x;
+		this.y = y;
 	}
 
-	spawnEnemy(){
-		const x = this.sys.game.canvas.width / 2;
-		const y = this.sys.game.canvas.height / 2;
-
-		new Enemy(this, x, y);
+	getPositionX(){
+		return this.x;
 	}
 
-	override update(){
+	getPositionY(){
+		return this.y;
+	}
+}
+
+export class EnemySpawner{
+	private locationArray : SpawnPosition[];
+	private scene : Phaser.Scene;
+
+	constructor(scene : Phaser.Scene, locationArray : SpawnPosition[]){
+		this.locationArray = locationArray;
+		this.scene = scene;
+	}
+
+	spawnEnemy(numEnemies : integer){
+		for(let index = 0; index < numEnemies; index++){
+			let r = Math.random() * (this.locationArray.length - 1) + 1;
+			
+			new Enemy(this.scene, this.locationArray[r].getPositionX(), this.locationArray[r].getPositionY());
+		}
 	}
 }
