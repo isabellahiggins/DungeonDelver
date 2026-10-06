@@ -2,3 +2,5 @@ dist/
 test_output/
 .celbridge/
 .DS_Store
+node_modules/
+package_lock.json

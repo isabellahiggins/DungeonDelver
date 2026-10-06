@@ -31,6 +31,11 @@
     "dependencies": [
       "jsr:@std/assert@1",
       "npm:phaser@^4.2.1"
-    ]
+    ],
+    "packageJson": {
+      "dependencies": [
+        "npm:phaser@^4.2.1"
+      ]
+    }
   }
 }
