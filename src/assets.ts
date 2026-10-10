@@ -17,3 +17,7 @@ export const DECO_LAYER = "Deco";
 // Enemy
 export const ENEMY_KEY = "enemy";
 export const ENEMY_FILE = "assets/DebugEnemy.png";
+
+//Player
+export const PLAYER_KEY = "player";
+export const PLAYER_FILE = "assets/DebugPlayer.png";

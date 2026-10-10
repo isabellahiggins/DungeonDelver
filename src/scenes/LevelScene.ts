@@ -2,14 +2,16 @@ import * as Phaser from "phaser";
 import{ MAP_KEY, MAP_FILE, GROUND_TILESET_NAME,
      GROUND_KEY, GROUND_FILE,DECO_TILESET_NAME,
      DECO_KEY,DECO_FILE,GROUND_LAYER,DECO_LAYER,
-	 ENEMY_KEY, ENEMY_FILE} from "../assets.ts";
+	ENEMY_KEY, ENEMY_FILE, PLAYER_KEY, PLAYER_FILE} from "../assets.ts";
 import {EnemySpawner, SpawnPosition} from "../enemyspawner.ts";
+import Player from "../Player.ts";
 
 export default class LevelScene extends Phaser.Scene {
      private map!: Phaser.Tilemaps.Tilemap;
      private ground!: Phaser.Tilemaps.TilemapLayer;
      private deco!: Phaser.Tilemaps.TilemapLayer;
 	 private enemySpawner! : EnemySpawner;
+     private player! : Player;
      
      constructor(){
           super("LevelScene");
@@ -20,6 +22,7 @@ export default class LevelScene extends Phaser.Scene {
           this.load.image(GROUND_KEY, GROUND_FILE);
           this.load.image(DECO_KEY, DECO_FILE);
 		  this.load.image(ENEMY_KEY, ENEMY_FILE);
+		  this.load.image(PLAYER_KEY, PLAYER_FILE);
      }
 
      private createMap(): void{
@@ -50,12 +53,22 @@ export default class LevelScene extends Phaser.Scene {
 		this.enemySpawner = new EnemySpawner(this, spawn1, spawn2, spawn3, spawn4);
 	 }
 
+      private createPlayer(): void{
+          const centreX = this.sys.game.canvas.width / 2;
+          const centreY = this.sys.game.canvas.height / 2;
+          this.player = new Player(this, centreX, centreY);
+      }
+
      create(): void{
           this.createMap();
 		this.createSpawner();
-		
 		this.enemySpawner.spawnEnemy(1);
+          this.createPlayer();
 
+     }
+
+     override update(): void{
+          this.player.update();
      }
 
 }

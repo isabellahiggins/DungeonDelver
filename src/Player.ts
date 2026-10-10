@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { PLAYER_KEY} from './assets.ts';
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
 
@@ -13,7 +14,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     };
     
     constructor(scene: Phaser.Scene, x: number, y: number) {
-        super(scene, x, y, 'player');
+        super(scene, x, y, PLAYER_KEY);
 
         // add the player to the scene
         scene.add.existing(this);
