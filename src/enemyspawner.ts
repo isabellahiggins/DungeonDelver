@@ -1,26 +1,49 @@
 import Phaser from 'phaser';
+import{ENEMY_KEY, ENEMY_FILE} from "./assets.ts";
 
 class Enemy extends Phaser.Physics.Arcade.Sprite {
 	constructor(scene: Phaser.Scene, x: number, y: number) {
-		super(scene, x, y, 'enemy');
+		super(scene, x, y, ENEMY_KEY);
+		this.setScale(1)
 		scene.add.existing(this);
-		scene.physics.add.existing(this);
-		this.setCollideWorldBounds(true);
+		// scene.physics.add.existing(this);
+		//this.setCollideWorldBounds(true);
 	}
 }
 
-class EnemySpawner extends Phaser.Scene {
-	constructor() {
-		super('EnemySpawner');
+export class SpawnPosition{
+	private x : number;
+	private y : number;
+
+	constructor(x : number, y : number){
+		this.x = x;
+		this.y = y;
 	}
 
-	spawnEnemy(){
-		const x = this.sys.game.canvas.width / 2;
-		const y = this.sys.game.canvas.height / 2;
-
-		new Enemy(this, x, y);
+	getPositionX(){
+		return this.x;
 	}
 
-	update(){
+	getPositionY(){
+		return this.y;
+	}
+}
+
+export class EnemySpawner{
+	private locationArray : SpawnPosition[];
+	private scene : Phaser.Scene;
+
+	constructor(scene : Phaser.Scene, ...locationArray : SpawnPosition[]){
+		this.locationArray = locationArray;
+		this.scene = scene;
+	}
+
+	spawnEnemy(numEnemies : integer){
+		for(let index = 0; index < numEnemies; index++){
+			let r = Math.floor(Math.random() * (this.locationArray.length));
+			console.log(r);
+			
+			new Enemy(this.scene, this.locationArray[r].getPositionX(), this.locationArray[r].getPositionY());
+		}
 	}
 }

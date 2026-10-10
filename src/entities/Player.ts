@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import Bullet from './bullet.ts';
+import { PLAYER_KEY} from './assets.ts';
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
 

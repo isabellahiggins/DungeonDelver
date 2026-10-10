@@ -1,30 +1,22 @@
 // Dungeon Delver - starting point. Replace this scene with the real game.
 import * as Phaser from "phaser";
-
-class StartScene extends Phaser.Scene {
-  constructor() {
-    super("StartScene");
-  }
-
-  preload() {
-    this.load.image("tiles", "assets/Tilemap_Flat.png");
-  }
-
-  create() {
-    this.add.text(512, 120, "Dungeon Delver", { fontSize: "48px", color: "#ffffff" }).setOrigin(0.5);
-    this.add.image(512, 384, "tiles");
-    this.add.text(512, 640, "assets/Tilemap_Flat.png loaded - the game starts here", {
-      fontSize: "20px",
-      color: "#aaaaaa",
-    }).setOrigin(0.5);
-  }
-}
+import LevelScene from "./scenes/LevelScene.ts";
 
 new Phaser.Game({
   type: Phaser.AUTO,
-  width: 1024,
-  height: 768,
+  width: 2048,
+  height: 2048,
   pixelArt: true,
   parent: "game-container",
-  scene: [StartScene],
-});
+  scene: [LevelScene],
+  scale: {
+	mode: Phaser.Scale.FIT,
+	autoCenter: Phaser.Scale.CENTER_BOTH
+  },
+  physics: {
+    default: "arcade",
+    arcade: {
+      gravity:{x: 0, y: 0}
+    }
+  }
+  });
