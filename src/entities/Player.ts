@@ -33,6 +33,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'player');
 
+		this.setScale(0.3);
+
         // add the player to the scene
         scene.add.existing(this);
         scene.physics.add.existing(this);
