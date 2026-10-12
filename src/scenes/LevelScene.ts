@@ -4,7 +4,7 @@ import{ MAP_KEY, MAP_FILE, GROUND_TILESET_NAME,
      DECO_KEY,DECO_FILE,GROUND_LAYER,DECO_LAYER,
 	ENEMY_KEY, ENEMY_FILE, PLAYER_KEY, PLAYER_FILE} from "../assets.ts";
 import {EnemySpawner, SpawnPosition} from "../enemyspawner.ts";
-import Player from "../Player.ts";
+import Player from "../entities/Player.ts";
 
 export default class LevelScene extends Phaser.Scene {
      private map!: Phaser.Tilemaps.Tilemap;
@@ -69,6 +69,7 @@ export default class LevelScene extends Phaser.Scene {
 
      override update(): void{
           this.player.update();
+          this.enemySpawner.moveEnemies(this.player);
      }
 
 }
