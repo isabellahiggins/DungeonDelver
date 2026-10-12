@@ -62,7 +62,7 @@ export default class LevelScene extends Phaser.Scene {
      create(): void{
           this.createMap();
 		this.createSpawner();
-		this.enemySpawner.spawnEnemy(1);
+		this.enemySpawner.spawnEnemy(12);
           this.createPlayer();
 
      }
