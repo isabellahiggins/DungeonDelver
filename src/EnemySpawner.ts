@@ -12,7 +12,7 @@ export class EnemySpawner{
 		this.scene = scene;
 	}
 
-	spawnEnemy(numEnemies: integer){
+	private spawnEnemy(numEnemies: integer){
 		for(let index = 0; index < numEnemies; index++){
 			let r = Math.floor(Math.random() * (this.locationArray.length));
 			console.log(r);
@@ -21,6 +21,14 @@ export class EnemySpawner{
 			this.enemies.push(enemy);
 
 		}
+	}
+
+	startWave(numEnemies: integer){
+		this.spawnEnemy(numEnemies);
+	}
+
+	enemiesLeft(): integer{
+		return this.enemies.length;
 	}
 
 	moveEnemies(player: Phaser.Physics.Arcade.Sprite){

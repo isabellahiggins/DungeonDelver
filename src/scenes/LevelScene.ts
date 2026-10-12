@@ -13,6 +13,8 @@ export default class LevelScene extends Phaser.Scene {
      private deco!: Phaser.Tilemaps.TilemapLayer;
 	 private enemySpawner! : EnemySpawner;
      private player! : Player;
+	 private spawnTime: integer = 0;
+	 private timeBetweenWaves: integer = 3000; // In Milliseconds
      
      constructor(){
           super("LevelScene");
@@ -63,17 +65,25 @@ export default class LevelScene extends Phaser.Scene {
      create(): void{
           this.createMap();
 		this.createSpawner();
-		this.enemySpawner.spawnEnemy(12);
           this.createPlayer();
 
      }
 
-     override update(): void{
-          this.player.update();
-          this.enemySpawner.moveEnemies(this.player);
-     }
+     override update(time: integer): void{
+		this.player.update();
+        this.enemySpawner.moveEnemies(this.player);
+
+		console.log("SpawnTime: " + this.spawnTime);
+		console.log("Current Time: " + time);
+
+		if(time >= (this.spawnTime + this.timeBetweenWaves) && this.enemySpawner.enemiesLeft() == 0){
+			console.log("Spawing Enemies!!!")
+			this.enemySpawner.startWave(12);
+			this.spawnTime = time;
+		}
+		if(this.enemySpawner.enemiesLeft() != 0){
+			this.spawnTime = time;
+		}
+	}
 
 }
-
-
-  
