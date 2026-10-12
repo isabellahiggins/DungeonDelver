@@ -4,10 +4,18 @@ import{ENEMY_KEY, ENEMY_FILE} from "./assets.ts";
 class Enemy extends Phaser.Physics.Arcade.Sprite {
 	constructor(scene: Phaser.Scene, x: number, y: number) {
 		super(scene, x, y, ENEMY_KEY);
-		this.setScale(1)
+		this.setScale(1);
 		scene.add.existing(this);
-		// scene.physics.add.existing(this);
+		scene.physics.add.existing(this);
 		//this.setCollideWorldBounds(true);
+	}
+
+	override update(x: number, y: number){
+		this.setVelocity(0);
+
+		this.setVelocity(x - this.x, y - this.y);
+
+		this.body!.velocity.normalize().scale(400);
 	}
 }
 
@@ -32,10 +40,12 @@ export class SpawnPosition{
 export class EnemySpawner{
 	private locationArray : SpawnPosition[];
 	private scene : Phaser.Scene;
+	private enemies: Enemy[];
 
 	constructor(scene : Phaser.Scene, ...locationArray : SpawnPosition[]){
 		this.locationArray = locationArray;
 		this.scene = scene;
+		this.enemies = [];
 	}
 
 	spawnEnemy(numEnemies : integer){
@@ -43,7 +53,14 @@ export class EnemySpawner{
 			let r = Math.floor(Math.random() * (this.locationArray.length));
 			console.log(r);
 			
-			new Enemy(this.scene, this.locationArray[r].getPositionX(), this.locationArray[r].getPositionY());
+			this.enemies.push(new Enemy(this.scene, this.locationArray[r].getPositionX(), this.locationArray[r].getPositionY()));
+		}
+	}
+
+	updateEnemies(x: number, y: number){
+		for (let index = 0; index < this.enemies.length; index++) {
+			const element = this.enemies[index];
+			element.update(x, y);
 		}
 	}
 }
