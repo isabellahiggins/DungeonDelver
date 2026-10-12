@@ -1,10 +1,10 @@
 import Phaser from 'phaser';
 import Bullet from './bullet.ts';
-import { PLAYER_KEY} from './assets.ts';
+import { PLAYER_KEY} from '../assets.ts';
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
 
-    private speed = 100; // movement speed - possibly rehome into a file with other constants for easier tweaking
+    private speed = 500; // movement speed - possibly rehome into a file with other constants for easier tweaking
 
     // method to fire bullets at a given direction
     private shoot(angle: number) {
