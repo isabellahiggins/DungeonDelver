@@ -12,7 +12,7 @@ export class EnemySpawner{
 		this.scene = scene;
 	}
 
-	private spawnEnemy(numEnemies: integer){
+	 spawnEnemy(numEnemies: integer){
 		for(let index = 0; index < numEnemies; index++){
 			let r = Math.floor(Math.random() * (this.locationArray.length));
 			console.log(r);
@@ -36,4 +36,9 @@ export class EnemySpawner{
 			enemy.followPlayer(player);
 		}
 	}
+
+	getEnemies(): Enemy[]{
+		return this.enemies;
+	}
+	
 }

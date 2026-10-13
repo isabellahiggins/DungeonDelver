@@ -15,6 +15,8 @@ export default class LevelScene extends Phaser.Scene {
      private player! : Player;
 	 private spawnTime: integer = 0;
 	 private timeBetweenWaves: integer = 3000; // In Milliseconds
+     private hudText!: Phaser.GameObjects.Text;
+     private lives = 3;
      
      constructor(){
           super("LevelScene");
@@ -62,11 +64,39 @@ export default class LevelScene extends Phaser.Scene {
           this.player = new Player(this, centreX, centreY);
       }
 
+      private updatehud(): void{
+          this.hudText.setText(`Lives: ${this.lives}`);
+      }
+
+      private loseLife(): void{
+          if(this.player.isGodMode()){
+               return;
+          }
+          this.lives = this.lives - 1;
+          this.updatehud();
+          this.player.makeGodMode();
+          if(this.lives <=0){
+               this.scene.start("GameOver");
+          }
+
+      }
+
      create(): void{
           this.createMap();
 		this.createSpawner();
+		this.enemySpawner.spawnEnemy(12);
           this.createPlayer();
+          this.hudText = this.add.text(32, 32, `Lives: ${this.lives}`,{
+               fontFamily:"Arial",
+               fontSize: "50px",
+               color: 'white',
+               fontStyle: "bold"
+          });
+          this.updatehud();
 
+          this.physics.add.overlap(this.player, this.enemySpawner.getEnemies(), ()=>{
+               this.loseLife();
+          })
      }
 
      override update(time: integer): void{
@@ -77,13 +107,14 @@ export default class LevelScene extends Phaser.Scene {
 		console.log("Current Time: " + time);
 
 		if(time >= (this.spawnTime + this.timeBetweenWaves) && this.enemySpawner.enemiesLeft() == 0){
-			console.log("Spawing Enemies!!!")
-			this.enemySpawner.startWave(12);
 			this.spawnTime = time;
 		}
 		if(this.enemySpawner.enemiesLeft() != 0){
 			this.spawnTime = time;
 		}
-	}
+	
+          this.player.update();
+          this.enemySpawner.moveEnemies(this.player);
+     }
 
 }
