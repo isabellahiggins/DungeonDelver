@@ -70,7 +70,7 @@ export default class LevelScene extends Phaser.Scene {
      }
 
      override update(time: integer): void{
-		this.player.update();
+		this.player.update(time);
         this.enemySpawner.moveEnemies(this.player);
 
 		console.log("SpawnTime: " + this.spawnTime);

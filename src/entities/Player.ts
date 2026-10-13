@@ -1,10 +1,22 @@
 import Phaser from 'phaser';
 import Bullet from './bullet.ts';
-import { PLAYER_KEY} from '../assets.ts';
+import {PLAYER_KEY} from '../assets.ts';
+
+const FIRE_DELAY = 400;
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
 
+    private nextFireTime = 0;
     private speed = 500; // movement speed - possibly rehome into a file with other constants for easier tweaking
+
+    private tryToFire(time: number): boolean {
+        if (time < this.nextFireTime) {
+            return false;
+        }
+
+        this.nextFireTime = time + FIRE_DELAY;
+        return true;
+    }
 
     // method to fire bullets at a given direction
     private shoot(angle: number) {
@@ -55,7 +67,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         };
     }
 
-    override update() {
+    override update(time: number) {
         this.setVelocity(0);
 
         // up + down movement
@@ -75,22 +87,21 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.body!.velocity.normalize().scale(this.speed) // prevent diagonal movement being faster
 
         // directional shooting
-        if (this.keys.UP.isDown) {
+        if (this.keys.UP.isDown && this.tryToFire(time)) {
             this.shoot(-Math.PI / 2);
         }
 
-        if (this.keys.DOWN.isDown) {
+        if (this.keys.DOWN.isDown && this.tryToFire(time)) {
             this.shoot(Math.PI / 2);
         }
 
-        if (this.keys.LEFT.isDown) {
+        if (this.keys.LEFT.isDown && this.tryToFire(time)) {
             this.shoot(Math.PI);
         }
 
-        if (this.keys.RIGHT.isDown) {
+        if (this.keys.RIGHT.isDown && this.tryToFire(time)) {
             this.shoot(0);
         }
     }
 }
-
 
