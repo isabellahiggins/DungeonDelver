@@ -5,6 +5,7 @@ import { PLAYER_KEY} from '../assets.ts';
 export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     private speed = 500; // movement speed - possibly rehome into a file with other constants for easier tweaking
+    private godMode = false;
 
     // method to fire bullets at a given direction
     private shoot(angle: number) {
@@ -91,6 +92,25 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.shoot(0);
         }
     }
+
+    public isGodMode(): boolean{
+          return this.godMode;
+     }
+
+     public makeGodMode(): void{
+          this.godMode = true;
+          this.scene.tweens.add({
+            targets: this,
+            alpha: 0.15,
+            duration: 200,
+            yoyo: true,
+            repeat:3 ,
+            onComplete: () =>{
+                this.setAlpha(1);
+                this.godMode = false;
+            }
+          })
+     }
 }
 
 
