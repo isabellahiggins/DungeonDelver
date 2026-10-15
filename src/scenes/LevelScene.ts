@@ -43,7 +43,8 @@ export default class LevelScene extends Phaser.Scene {
 
           this.ground = this.map.createLayer(GROUND_LAYER, [groundTiles, decoTiles]) as Phaser.Tilemaps.TilemapLayer;
           this.deco = this.map.createLayer(DECO_LAYER, [groundTiles, decoTiles]) as Phaser.Tilemaps.TilemapLayer;  
-          this.ground.setCollisionByProperty({ collides: true });
+          this.ground.setCollisionByProperty({ collision: true });
+          this.deco.setCollisionByProperty({ collision: true });
      }
 
 	 private createSpawner(){
@@ -97,6 +98,10 @@ export default class LevelScene extends Phaser.Scene {
           this.physics.add.overlap(this.player, this.enemySpawner.getEnemies(), ()=>{
                this.loseLife();
           })
+          this.deco.setCollisionByProperty({ collision: true });
+          this.physics.add.collider(this.player, this.deco);
+          this.physics.add.collider(this.enemySpawner.getEnemies(), this.deco);
+
      }
 
      override update(time: integer): void{
@@ -113,7 +118,7 @@ export default class LevelScene extends Phaser.Scene {
 			this.spawnTime = time;
 		}
 	
-          this.player.update();
+          this.player.update(3);
           this.enemySpawner.moveEnemies(this.player);
      }
 
