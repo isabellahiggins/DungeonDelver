@@ -1,0 +1,1 @@
+export type PowerUpType = "spread" | "life" | "rapidShot" | "speed" | "ghostBullets"
