@@ -1,6 +1,8 @@
 // Dungeon Delver - starting point. Replace this scene with the real game.
 import * as Phaser from "phaser";
+import GameOver from "./scenes/GameOver.ts";
 import LevelScene from "./scenes/LevelScene.ts";
+import StartScene from "./scenes/startScene.ts";
 
 new Phaser.Game({
   type: Phaser.AUTO,
@@ -8,7 +10,7 @@ new Phaser.Game({
   height: 2048,
   pixelArt: true,
   parent: "game-container",
-  scene: [LevelScene],
+  scene: [StartScene,LevelScene, GameOver],
   scale: {
 	mode: Phaser.Scale.FIT,
 	autoCenter: Phaser.Scale.CENTER_BOTH

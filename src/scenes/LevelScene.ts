@@ -22,6 +22,11 @@ export default class LevelScene extends Phaser.Scene {
           super("LevelScene");
      }
 
+     init(): void{
+          this.lives = 3;
+          this.spawnTime = 0;
+     }
+
      preload(): void{
           this.load.tilemapTiledJSON(MAP_KEY, MAP_FILE);
           this.load.image(GROUND_KEY, GROUND_FILE);

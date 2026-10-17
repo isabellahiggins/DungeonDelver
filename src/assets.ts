@@ -21,3 +21,6 @@ export const ENEMY_FILE = "assets/DebugEnemy.png";
 //Player
 export const PLAYER_KEY = "player";
 export const PLAYER_FILE = "assets/DebugPlayer.png";
+// Start scene
+export const START_BACKGROUND_KEY = "startBackground";
+export const START_BACKGROUND_FILE = "assets/StartSceneBackground.png";
