@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import Bullet from './bullet.ts';
 import {PLAYER_KEY} from '../assets.ts';
+import LevelScene from '../scenes/LevelScene.ts';
 
 const FIRE_DELAY = 400;
 
@@ -9,6 +10,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     private nextFireTime = 0;
     private speed = 500; // movement speed - possibly rehome into a file with other constants for easier tweaking
     private godMode = false;
+	private levelScene: LevelScene;
 
     private tryToFire(time: number): boolean {
         if (time < this.nextFireTime) {
@@ -27,6 +29,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.y
         );
 
+		for(const enemy of this.levelScene.enemySpawner.getEnemies()){
+			this.levelScene.physics.add.overlap(enemy, bullet, (e)=>{
+				this.levelScene.enemySpawner.removeEnemy(enemy);
+				this.levelScene.killEnemy(enemy, bullet);
+			})
+		}
+
         bullet.shoot(angle);
     }
 
@@ -43,8 +52,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         RIGHT: Phaser.Input.Keyboard.Key
     };
     
-    constructor(scene: Phaser.Scene, x: number, y: number) {
+    constructor(scene: LevelScene, x: number, y: number) {
         super(scene, x, y, 'player');
+		this.levelScene = scene;
 
 		this.setScale(0.3);
 

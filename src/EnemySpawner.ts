@@ -40,5 +40,26 @@ export class EnemySpawner{
 	getEnemies(): Enemy[]{
 		return this.enemies;
 	}
-	
+
+	getEnemiesGroup(): Phaser.Physics.Arcade.Group{
+		const enemiesGroup = this.scene.physics.add.group();
+		
+		for(const enemy of this.enemies){
+			enemiesGroup.add(enemy);
+		}
+		return enemiesGroup;
+	}
+
+	removeEnemy(deadEnemy: Enemy): void{
+		const newEnemies = [];
+
+		for(const enemy of this.enemies){
+			if(enemy == deadEnemy){
+				continue;
+			}
+			newEnemies.push(enemy);
+		}
+
+		this.enemies = newEnemies;
+	}
 }

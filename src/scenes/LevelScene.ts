@@ -6,12 +6,14 @@ import{ MAP_KEY, MAP_FILE, GROUND_TILESET_NAME,
 import {EnemySpawner} from "../EnemySpawner.ts";
 import Player from "../entities/Player.ts";
 import { SpawnPosition } from "../SpawnPosition.ts";
+import Bullet from "../entities/bullet.ts";
+import { Enemy } from "../entities/Enemy.ts";
 
 export default class LevelScene extends Phaser.Scene {
      private map!: Phaser.Tilemaps.Tilemap;
      private ground!: Phaser.Tilemaps.TilemapLayer;
      private deco!: Phaser.Tilemaps.TilemapLayer;
-	 private enemySpawner! : EnemySpawner;
+	enemySpawner! : EnemySpawner;
      private player! : Player;
 	 private spawnTime: integer = 0;
 	 private timeBetweenWaves: integer = 3000; // In Milliseconds
@@ -87,10 +89,15 @@ export default class LevelScene extends Phaser.Scene {
 
       }
 
+	killEnemy(enemy: Enemy, bullet: Bullet): void{
+		enemy.destroy();
+		bullet.destroy();
+	  }
+
      create(): void{
           this.createMap();
 		this.createSpawner();
-		this.enemySpawner.spawnEnemy(12);
+		this.enemySpawner.spawnEnemy(3);
           this.createPlayer();
           this.hudText = this.add.text(32, 32, `Lives: ${this.lives}`,{
                fontFamily:"Arial",
@@ -115,9 +122,15 @@ export default class LevelScene extends Phaser.Scene {
 
 		console.log("SpawnTime: " + this.spawnTime);
 		console.log("Current Time: " + time);
+		console.log("Enemies Left: " + this.enemySpawner.enemiesLeft());
+		console.log("Spawning At: " + (this.spawnTime + this.timeBetweenWaves));
 
 		if(time >= (this.spawnTime + this.timeBetweenWaves) && this.enemySpawner.enemiesLeft() == 0){
 			this.spawnTime = time;
+			this.enemySpawner.spawnEnemy(3);
+			this.physics.add.overlap(this.player, this.enemySpawner.getEnemies(), ()=>{
+				this.loseLife();
+			})
 		}
 		if(this.enemySpawner.enemiesLeft() != 0){
 			this.spawnTime = time;
