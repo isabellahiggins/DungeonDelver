@@ -141,9 +141,5 @@ export default class LevelScene extends Phaser.Scene {
 		if(this.enemySpawner.enemiesLeft() != 0){
 			this.spawnTime = time;
 		}
-	
-          this.player.update(3);
-          this.enemySpawner.moveEnemies(this.player);
-     }
-
+	}
 }
