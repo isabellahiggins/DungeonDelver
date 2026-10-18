@@ -13,7 +13,7 @@ export default class LevelScene extends Phaser.Scene {
      private map!: Phaser.Tilemaps.Tilemap;
      private ground!: Phaser.Tilemaps.TilemapLayer;
      private deco!: Phaser.Tilemaps.TilemapLayer;
-	enemySpawner! : EnemySpawner;
+	 private enemySpawner! : EnemySpawner;
      private player! : Player;
 	 private spawnTime: integer = 0;
 	 private timeBetweenWaves: integer = 3000; // In Milliseconds
@@ -90,14 +90,26 @@ export default class LevelScene extends Phaser.Scene {
       }
 
 	killEnemy(enemy: Enemy, bullet: Bullet): void{
+		this.enemySpawner.removeEnemy(enemy);
 		enemy.destroy();
 		bullet.destroy();
+	  }
+
+	registerNewEnemies(){
+		this.physics.add.overlap(this.enemySpawner.getEnemies(), this.player.getAllBullets(), (e, f)=>{
+			this.killEnemy(e as Enemy, f as Bullet);
+		})
+		this.physics.add.overlap(this.player, this.enemySpawner.getEnemies(), ()=>{
+			this.loseLife();
+		})
+		this.physics.add.collider(this.enemySpawner.getEnemies(), this.deco);
+		this.physics.add.collider(this.enemySpawner.getEnemies(), this.enemySpawner.getEnemies());
 	  }
 
      create(): void{
           this.createMap();
 		this.createSpawner();
-		this.enemySpawner.spawnEnemy(3);
+		this.enemySpawner.startWave(3);
           this.createPlayer();
           this.hudText = this.add.text(32, 32, `Lives: ${this.lives}`,{
                fontFamily:"Arial",
@@ -107,13 +119,9 @@ export default class LevelScene extends Phaser.Scene {
           });
           this.updatehud();
 
-          this.physics.add.overlap(this.player, this.enemySpawner.getEnemies(), ()=>{
-               this.loseLife();
-          })
           this.deco.setCollisionByProperty({ collision: true });
           this.physics.add.collider(this.player, this.deco);
-          this.physics.add.collider(this.enemySpawner.getEnemies(), this.deco);
-
+		  this.registerNewEnemies();
      }
 
      override update(time: integer): void{
@@ -127,10 +135,8 @@ export default class LevelScene extends Phaser.Scene {
 
 		if(time >= (this.spawnTime + this.timeBetweenWaves) && this.enemySpawner.enemiesLeft() == 0){
 			this.spawnTime = time;
-			this.enemySpawner.spawnEnemy(3);
-			this.physics.add.overlap(this.player, this.enemySpawner.getEnemies(), ()=>{
-				this.loseLife();
-			})
+			this.enemySpawner.startWave(3);
+			this.registerNewEnemies();
 		}
 		if(this.enemySpawner.enemiesLeft() != 0){
 			this.spawnTime = time;
