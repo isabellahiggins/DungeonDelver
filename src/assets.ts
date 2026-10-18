@@ -24,3 +24,7 @@ export const PLAYER_FILE = "assets/DebugPlayer.png";
 // Start scene
 export const START_BACKGROUND_KEY = "startBackground";
 export const START_BACKGROUND_FILE = "assets/StartSceneBackground.png";
+
+//Bullet
+export const BULLET_KEY = "bullet";
+export const BULLET_FILE = "assets/bullet.png";
