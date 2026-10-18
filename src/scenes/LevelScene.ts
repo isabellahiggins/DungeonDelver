@@ -109,7 +109,7 @@ export default class LevelScene extends Phaser.Scene {
      create(): void{
           this.createMap();
 		this.createSpawner();
-		this.enemySpawner.startWave(3);
+		this.enemySpawner.startWave(12);
           this.createPlayer();
           this.hudText = this.add.text(32, 32, `Lives: ${this.lives}`,{
                fontFamily:"Arial",
@@ -135,7 +135,7 @@ export default class LevelScene extends Phaser.Scene {
 
 		if(time >= (this.spawnTime + this.timeBetweenWaves) && this.enemySpawner.enemiesLeft() == 0){
 			this.spawnTime = time;
-			this.enemySpawner.startWave(3);
+			this.enemySpawner.startWave(12);
 			this.registerNewEnemies();
 		}
 		if(this.enemySpawner.enemiesLeft() != 0){

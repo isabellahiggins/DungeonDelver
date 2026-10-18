@@ -1,13 +1,16 @@
 import Phaser from 'phaser';
 import {Enemy} from "./entities/Enemy.ts";
 import {SpawnPosition} from './SpawnPosition.ts';
+import LevelScene from './scenes/LevelScene.ts';
 
 export class EnemySpawner{
 	private locationArray: SpawnPosition[];
-	private scene: Phaser.Scene;
+	private scene: LevelScene;
 	private enemies: Enemy[] = [];
+	private toSpawn: Enemy[] = [];
+	private spawner?: Phaser.Time.TimerEvent;
 
-	constructor(scene: Phaser.Scene, ...locationArray: SpawnPosition[]){
+	constructor(scene: LevelScene, ...locationArray: SpawnPosition[]){
 		this.locationArray = locationArray;
 		this.scene = scene;
 	}
@@ -18,8 +21,26 @@ export class EnemySpawner{
 			console.log(r);
 			
 			const enemy = new Enemy(this.scene, this.locationArray[r].getPositionX(), this.locationArray[r].getPositionY());
-			this.enemies.push(enemy);
+			this.toSpawn.push(enemy);
+		}
 
+		this.spawner = this.scene.time.addEvent({
+			delay: 1000,
+			callback: this.aliveEnemy,
+			callbackScope: this,
+			loop: true
+		});
+	}
+
+	aliveEnemy(): void{
+		const currentEnemy: Enemy = this.toSpawn.pop() as Enemy;
+		this.scene.add.existing(currentEnemy);
+		this.scene.physics.add.existing(currentEnemy);
+		this.enemies.push(currentEnemy)
+		this.scene.registerNewEnemies();
+		console.log(this.toSpawn.length)
+		if(this.toSpawn.length == 0){
+			this.spawner?.remove();
 		}
 	}
 
@@ -28,7 +49,7 @@ export class EnemySpawner{
 	}
 
 	enemiesLeft(): integer{
-		return this.enemies.length;
+		return this.enemies.length + this.toSpawn.length;
 	}
 
 	moveEnemies(player: Phaser.Physics.Arcade.Sprite){
