@@ -1,4 +1,5 @@
 import * as Phaser from "phaser";
+import { GAMEOVER_MUSIC_KEY } from "../assets.ts";
 
 export default class GameOver extends Phaser.Scene {
     constructor() {
@@ -17,7 +18,13 @@ export default class GameOver extends Phaser.Scene {
 
         //when space bar is pressed, restart level 
         this.input.keyboard!.once("keydown-SPACE", () => {
+			this.sound.stopAll();
             this.scene.start("LevelScene");
         });
+
+		this.sound.play(GAMEOVER_MUSIC_KEY, {
+			loop: true,
+			volume: 0.3
+		});
     }
 }

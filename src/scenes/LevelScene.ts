@@ -4,7 +4,9 @@ import{ MAP_KEY, MAP_FILE, GROUND_TILESET_NAME,
      DECO_KEY,DECO_FILE,GROUND_LAYER,DECO_LAYER,
 	ENEMY_KEY, ENEMY_FILE, PLAYER_KEY, PLAYER_FILE, BULLET_FILE, BULLET_KEY,
 	MUSIC_KEY,
-	MUSIC_FILE} from "../assets.ts";
+	MUSIC_FILE,
+	GAMEOVER_MUSIC_KEY,
+	GAMEOVER_MUSIC_FILE} from "../assets.ts";
 import {EnemySpawner} from "../EnemySpawner.ts";
 import Player from "../entities/Player.ts";
 import { SpawnPosition } from "../SpawnPosition.ts";
@@ -39,6 +41,7 @@ export default class LevelScene extends Phaser.Scene {
 		  this.load.image(PLAYER_KEY, PLAYER_FILE);
 		  this.load.image(BULLET_KEY, BULLET_FILE);
 		  this.load.audio(MUSIC_KEY, MUSIC_FILE);
+		  this.load.audio(GAMEOVER_MUSIC_KEY, GAMEOVER_MUSIC_FILE);
      }
 
      private createMap(): void{
@@ -88,8 +91,8 @@ export default class LevelScene extends Phaser.Scene {
           this.updatehud();
           this.player.makeGodMode();
           if(this.lives <=0){
+			this.sound.stopAll();
                this.scene.start("GameOver");
-			   this.sound.stopAll();
           }
 
       }

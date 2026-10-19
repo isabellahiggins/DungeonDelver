@@ -32,3 +32,7 @@ export const BULLET_FILE = "assets/bullet.png";
 // Background Music
 export const MUSIC_KEY = "music";
 export const MUSIC_FILE = "assets/music/background.mp3";
+
+// Gameover Music
+export const GAMEOVER_MUSIC_KEY = "gameover_music";
+export const GAMEOVER_MUSIC_FILE = "assets/music/mus_gameover.ogg";
