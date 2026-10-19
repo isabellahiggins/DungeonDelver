@@ -1,5 +1,5 @@
 import * as Phaser from "phaser";
-import { START_BACKGROUND_FILE, START_BACKGROUND_KEY } from "../assets.ts";
+import { MENU_MUSIC_FILE, MENU_MUSIC_KEY, START_BACKGROUND_FILE, START_BACKGROUND_KEY } from "../assets.ts";
 
 export default class startScene extends Phaser.Scene {
     constructor() {
@@ -8,6 +8,7 @@ export default class startScene extends Phaser.Scene {
 
     preload(): void{
         this.load.image(START_BACKGROUND_KEY, START_BACKGROUND_FILE);
+		this.load.audio(MENU_MUSIC_KEY, MENU_MUSIC_FILE);
     }
 
     create(): void {
@@ -36,8 +37,14 @@ export default class startScene extends Phaser.Scene {
             align: "center"
         }).setOrigin(0.5);
 
+		this.sound.play(MENU_MUSIC_KEY, {
+			loop: true,
+			volume: 0.5
+		});
+
         //when space bar is pressed, restart level 
         this.input.keyboard!.once("keydown-SPACE", () => {
+			this.sound.stopAll();
             this.scene.start("LevelScene");
         });
 

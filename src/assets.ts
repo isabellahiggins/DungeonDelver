@@ -36,3 +36,7 @@ export const MUSIC_FILE = "assets/music/background.mp3";
 // Gameover Music
 export const GAMEOVER_MUSIC_KEY = "gameover_music";
 export const GAMEOVER_MUSIC_FILE = "assets/music/mus_gameover.ogg";
+
+// Main Menu Music
+export const MENU_MUSIC_KEY = "menu_music";
+export const MENU_MUSIC_FILE = "assets/music/main_menu.mp3";
