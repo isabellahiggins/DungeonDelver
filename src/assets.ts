@@ -28,3 +28,7 @@ export const START_BACKGROUND_FILE = "assets/StartSceneBackground.png";
 //Bullet
 export const BULLET_KEY = "bullet";
 export const BULLET_FILE = "assets/bullet.png";
+
+// Background Music
+export const MUSIC_KEY = "music";
+export const MUSIC_FILE = "assets/music/background.mp3";

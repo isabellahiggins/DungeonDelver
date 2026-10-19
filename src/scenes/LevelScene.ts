@@ -2,7 +2,9 @@ import * as Phaser from "phaser";
 import{ MAP_KEY, MAP_FILE, GROUND_TILESET_NAME,
      GROUND_KEY, GROUND_FILE,DECO_TILESET_NAME,
      DECO_KEY,DECO_FILE,GROUND_LAYER,DECO_LAYER,
-	ENEMY_KEY, ENEMY_FILE, PLAYER_KEY, PLAYER_FILE, BULLET_FILE, BULLET_KEY} from "../assets.ts";
+	ENEMY_KEY, ENEMY_FILE, PLAYER_KEY, PLAYER_FILE, BULLET_FILE, BULLET_KEY,
+	MUSIC_KEY,
+	MUSIC_FILE} from "../assets.ts";
 import {EnemySpawner} from "../EnemySpawner.ts";
 import Player from "../entities/Player.ts";
 import { SpawnPosition } from "../SpawnPosition.ts";
@@ -36,6 +38,7 @@ export default class LevelScene extends Phaser.Scene {
 		  this.load.image(ENEMY_KEY, ENEMY_FILE);
 		  this.load.image(PLAYER_KEY, PLAYER_FILE);
 		  this.load.image(BULLET_KEY, BULLET_FILE);
+		  this.load.audio(MUSIC_KEY, MUSIC_FILE);
      }
 
      private createMap(): void{
@@ -86,6 +89,7 @@ export default class LevelScene extends Phaser.Scene {
           this.player.makeGodMode();
           if(this.lives <=0){
                this.scene.start("GameOver");
+			   this.sound.stopAll();
           }
 
       }
@@ -123,6 +127,10 @@ export default class LevelScene extends Phaser.Scene {
           this.deco.setCollisionByProperty({ collision: true });
           this.physics.add.collider(this.player, this.deco);
 		  this.registerNewEnemies();
+		  this.sound.play(MUSIC_KEY, {
+			loop: true,
+			volume: 0.5
+		  });
      }
 
      override update(time: integer): void{
