@@ -17,7 +17,7 @@ export class EnemySpawner{
 
 	private spawnEnemy(numEnemies: integer){
 		for(let index = 0; index < numEnemies; index++){
-			let r = Math.floor(Math.random() * (this.locationArray.length));
+			const r = Math.floor(Math.random() * (this.locationArray.length));
 			console.log(r);
 			
 			const enemy = new Enemy(this.scene, this.locationArray[r].getPositionX(), this.locationArray[r].getPositionY());
