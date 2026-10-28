@@ -4,12 +4,20 @@ import {PLAYER_KEY, PLAYER_SHOOT_KEY} from '../assets.ts';
 
 const FIRE_DELAY = 400;
 
+// power ups
+const SPREAD_SHOT_DURATION = 10000; // 10 seconds
+const SPREAD_SHOT_ANGLE = Math.PI / 6;
+
 export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     private nextFireTime = 0;
-    private speed = 500; // movement speed - possibly rehome into a file with other constants for easier tweaking
+    private speed = 500;
     private godMode = false;
 	private bullets: Bullet[] = [];
+
+    // power ups
+    private spreadShotActive = false;
+    private spreadShotTimer: Phaser.Time.TimerEvent | null = null;
 
     private tryToFire(time: number): boolean {
         if (time < this.nextFireTime) {
@@ -22,15 +30,22 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     // method to fire bullets at a given direction
     private shoot(angle: number) {
-        const bullet = new Bullet(
+        let bulletAngles = [angle]; // normal shot is just one bullet at the normal 90 degree angle
+
+        if (this.spreadShotActive) { // when spread shot is active, fire three bullets at angles in an array
+            bulletAngles = [angle - SPREAD_SHOT_ANGLE, angle, angle + SPREAD_SHOT_ANGLE];
+        }
+
+        for (const bulletAngle of bulletAngles) {
+            const bullet = new Bullet(
             this.scene,
             this.x,
             this.y
-        );
-
-		this.bullets.push(bullet);
-        bullet.shoot(angle);
-        this.scene.sound.play(PLAYER_SHOOT_KEY);
+            );
+            this.bullets.push(bullet);
+            bullet.shoot(bulletAngle);
+            this.scene.sound.play(PLAYER_SHOOT_KEY);
+        }
     }
 
 	getAllBullets(): Bullet[]{
@@ -130,5 +145,21 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             }
           })
      }
+
+    // power up methods (call them when power up is collected)
+    public activateSpreadShot(): void {
+        this.spreadShotActive = true;
+
+        // if a timer is already running, remove it to reset the duration
+        if (this.spreadShotTimer) {
+            this.spreadShotTimer.remove();
+        }
+
+        // set a new timer to deactivate the spread shot after the duration
+        this.spreadShotTimer = this.scene.time.delayedCall(SPREAD_SHOT_DURATION, () => {
+            this.spreadShotActive = false;
+            this.spreadShotTimer = null;
+        });
+    }
 }
 
