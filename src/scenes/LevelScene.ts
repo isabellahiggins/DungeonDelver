@@ -6,7 +6,7 @@ import{ MAP_KEY, MAP_FILE, GROUND_TILESET_NAME,
 	MUSIC_KEY,
 	MUSIC_FILE,
 	GAMEOVER_MUSIC_KEY,
-	GAMEOVER_MUSIC_FILE} from "../assets.ts";
+	GAMEOVER_MUSIC_FILE, PLAYER_HURT_KEY, PLAYER_HURT_FILE, PLAYER_SHOOT_KEY, PLAYER_SHOOT_FILE} from "../assets.ts";
 import {EnemySpawner} from "../EnemySpawner.ts";
 import Player from "../entities/Player.ts";
 import { SpawnPosition } from "../SpawnPosition.ts";
