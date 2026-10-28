@@ -40,3 +40,14 @@ export const GAMEOVER_MUSIC_FILE = "assets/music/mus_gameover.ogg";
 // Main Menu Music
 export const MENU_MUSIC_KEY = "menu_music";
 export const MENU_MUSIC_FILE = "assets/music/main_menu.mp3";
+
+// Win Music
+export const WIN_MUSIC_KEY = "win_music";
+export const WIN_MUSIC_FILE = "assets/music/winMusic.wav";
+//Player Hurt SFX
+export const PLAYER_HURT_KEY = "player_hurt";
+export const PLAYER_HURT_FILE = "assets/sfx/playerHurt.wav";
+
+//Player Shoot SFX
+export const PLAYER_SHOOT_KEY = "player_shoot";
+export const PLAYER_SHOOT_FILE = "assets/sfx/shootGun.mp3";

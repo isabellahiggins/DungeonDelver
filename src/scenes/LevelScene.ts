@@ -42,6 +42,8 @@ export default class LevelScene extends Phaser.Scene {
 		  this.load.image(BULLET_KEY, BULLET_FILE);
 		  this.load.audio(MUSIC_KEY, MUSIC_FILE);
 		  this.load.audio(GAMEOVER_MUSIC_KEY, GAMEOVER_MUSIC_FILE);
+		  this.load.audio(PLAYER_HURT_KEY, PLAYER_HURT_FILE);
+            this.load.audio(PLAYER_SHOOT_KEY, PLAYER_SHOOT_FILE);
      }
 
      private createMap(): void{
@@ -87,14 +89,14 @@ export default class LevelScene extends Phaser.Scene {
           if(this.player.isGodMode()){
                return;
           }
+          
           this.lives = this.lives - 1;
           this.updatehud();
           this.player.makeGodMode();
+          this.sound.play(PLAYER_HURT_KEY);
           if(this.lives <=0){
-			this.sound.stopAll();
                this.scene.start("GameOver");
           }
-
       }
 
 	killEnemy(enemy: Enemy, bullet: Bullet): void{
