@@ -1,6 +1,5 @@
 import Phaser, { Scene } from 'phaser';
 import Bullet from './bullet.ts';
-import {PLAYER_KEY} from '../assets.ts';
 import {PLAYER_KEY, PLAYER_SHOOT_KEY} from '../assets.ts';
 
 const FIRE_DELAY = 400;

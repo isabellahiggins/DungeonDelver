@@ -3,6 +3,7 @@ import * as Phaser from "phaser";
 import GameOver from "./scenes/GameOver.ts";
 import LevelScene from "./scenes/LevelScene.ts";
 import StartScene from "./scenes/startScene.ts";
+import WinScene from "./scenes/WinScene.ts";
 
 new Phaser.Game({
   type: Phaser.AUTO,
@@ -10,7 +11,7 @@ new Phaser.Game({
   height: 2048,
   pixelArt: true,
   parent: "game-container",
-  scene: [StartScene,LevelScene, GameOver],
+  scene: [StartScene,LevelScene, GameOver, WinScene],
   scale: {
 	mode: Phaser.Scale.FIT,
 	autoCenter: Phaser.Scale.CENTER_BOTH

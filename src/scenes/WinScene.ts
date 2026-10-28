@@ -22,8 +22,7 @@ export default class WinScene extends Phaser.Scene {
             this.scene.start("LevelScene");
         });
 
-        this.sound.play(WIN_MUSIC_KEY, {
-            volume: 0.3
-        });
+        this.sound.stopAll();
+        this.sound.play(WIN_MUSIC_KEY);
     }
 }

@@ -6,7 +6,7 @@ import{ MAP_KEY, MAP_FILE, GROUND_TILESET_NAME,
 	MUSIC_KEY,
 	MUSIC_FILE,
 	GAMEOVER_MUSIC_KEY,
-	GAMEOVER_MUSIC_FILE, PLAYER_HURT_KEY, PLAYER_HURT_FILE, PLAYER_SHOOT_KEY, PLAYER_SHOOT_FILE} from "../assets.ts";
+	GAMEOVER_MUSIC_FILE, PLAYER_HURT_KEY, PLAYER_HURT_FILE, PLAYER_SHOOT_KEY, PLAYER_SHOOT_FILE, WIN_MUSIC_KEY, WIN_MUSIC_FILE} from "../assets.ts";
 import {EnemySpawner} from "../EnemySpawner.ts";
 import Player from "../entities/Player.ts";
 import { SpawnPosition } from "../SpawnPosition.ts";
@@ -17,10 +17,17 @@ export default class LevelScene extends Phaser.Scene {
      private map!: Phaser.Tilemaps.Tilemap;
      private ground!: Phaser.Tilemaps.TilemapLayer;
      private deco!: Phaser.Tilemaps.TilemapLayer;
-	 private enemySpawner! : EnemySpawner;
+	private enemySpawner! : EnemySpawner;
      private player! : Player;
-	 private spawnTime: integer = 0;
-	 private timeBetweenWaves: integer = 3000; // In Milliseconds
+	private spawnTime: integer = 0;
+
+     // waves
+	private timeBetweenWaves: integer = 3000; // In Milliseconds
+     private currentWave = 1;
+     private totalWaves = 3;
+     private enemiesThisWave = 12;
+     private waveInProgress = false;
+     
      private hudText!: Phaser.GameObjects.Text;
      private lives = 3;
      
@@ -31,6 +38,9 @@ export default class LevelScene extends Phaser.Scene {
      init(): void{
           this.lives = 3;
           this.spawnTime = 0;
+          this.currentWave = 1;
+          this.enemiesThisWave = 12;
+          this.waveInProgress = false;
      }
 
      preload(): void{
@@ -44,6 +54,7 @@ export default class LevelScene extends Phaser.Scene {
 		  this.load.audio(GAMEOVER_MUSIC_KEY, GAMEOVER_MUSIC_FILE);
 		  this.load.audio(PLAYER_HURT_KEY, PLAYER_HURT_FILE);
             this.load.audio(PLAYER_SHOOT_KEY, PLAYER_SHOOT_FILE);
+            this.load.audio(WIN_MUSIC_KEY, WIN_MUSIC_FILE);
      }
 
      private createMap(): void{
@@ -83,6 +94,7 @@ export default class LevelScene extends Phaser.Scene {
 
       private updatehud(): void{
           this.hudText.setText(`Lives: ${this.lives}`);
+          // updates waves
       }
 
       private loseLife(): void{
@@ -119,7 +131,6 @@ export default class LevelScene extends Phaser.Scene {
      create(): void{
           this.createMap();
 		this.createSpawner();
-		this.enemySpawner.startWave(12);
           this.createPlayer();
           this.hudText = this.add.text(32, 32, `Lives: ${this.lives}`,{
                fontFamily:"Arial",
@@ -127,33 +138,52 @@ export default class LevelScene extends Phaser.Scene {
                color: 'white',
                fontStyle: "bold"
           });
-          this.updatehud();
+          this.hudText.setScrollFactor(0);
+          this.hudText.setDepth(1000);
 
           this.deco.setCollisionByProperty({ collision: true });
           this.physics.add.collider(this.player, this.deco);
-		  this.registerNewEnemies();
-		  this.sound.play(MUSIC_KEY, {
+		this.registerNewEnemies();
+		this.sound.play(MUSIC_KEY, {
 			loop: true,
 			volume: 0.5
-		  });
+		});
+
+          this.startWave();
+          this.updatehud();
+
+     }
+
+     private startWave(): void{
+          this.waveInProgress = true;
+          this.enemySpawner.startWave(this.enemiesThisWave); // starts 12 enemies with increments of 3
+          console.log(`[WAVE DEBUG] Started wave ${this.currentWave}/${this.totalWaves} with ${this.enemiesThisWave} enemies.`);
+          this.hudText.setText(`Wave: ${this.currentWave} / ${this.totalWaves}  |  Enemies Left: ${this.enemySpawner.enemiesLeft()}  |  Lives: ${this.lives}`);
      }
 
      override update(time: integer): void{
-		this.player.update(time);
-        this.enemySpawner.moveEnemies(this.player);
+	     this.player.update(time);
+          this.enemySpawner.moveEnemies(this.player);
 
-		console.log("SpawnTime: " + this.spawnTime);
-		console.log("Current Time: " + time);
-		console.log("Enemies Left: " + this.enemySpawner.enemiesLeft());
-		console.log("Spawning At: " + (this.spawnTime + this.timeBetweenWaves));
+          // wave is in progress and all enemies have been killed, start the next wave after a delay
+		if(this.waveInProgress && this.enemySpawner.enemiesLeft() === 0){
+			
+               // win condition
+               if (this.currentWave >= this.totalWaves) {
+                    console.log(`[WAVE DEBUG] Completed wave ${this.currentWave}/${this.totalWaves}. Starting WinScene.`);
+                    this.scene.start("WinScene");
+                    return;
+               }
 
-		if(time >= (this.spawnTime + this.timeBetweenWaves) && this.enemySpawner.enemiesLeft() == 0){
-			this.spawnTime = time;
-			this.enemySpawner.startWave(12);
-			this.registerNewEnemies();
-		}
-		if(this.enemySpawner.enemiesLeft() != 0){
-			this.spawnTime = time;
+               console.log(`[WAVE DEBUG] Completed wave ${this.currentWave}/${this.totalWaves}. Next wave starts in ${this.timeBetweenWaves} ms.`);
+			this.currentWave++;
+               this.enemiesThisWave += 3; // increase the number of enemies for the next wave
+
+               this.waveInProgress = false;
+			
+			this.time.delayedCall(this.timeBetweenWaves, () => { // buffer between waves
+                    this.startWave();
+               });
 		}
 	}
 }
