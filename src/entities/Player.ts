@@ -2,11 +2,12 @@ import Phaser, { Scene } from 'phaser';
 import Bullet from './bullet.ts';
 import {PLAYER_KEY, PLAYER_SHOOT_KEY} from '../assets.ts';
 
-const FIRE_DELAY = 400;
 
 // power ups
-const SPREAD_SHOT_DURATION = 10000; // 10 seconds
+const POWER_UP_DURATION = 10000; // 10 seconds
+
 const SPREAD_SHOT_ANGLE = Math.PI / 6;
+
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
 
@@ -14,17 +15,27 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     private speed = 500;
     private godMode = false;
 	private bullets: Bullet[] = [];
+    private fireDelay = 400; // milliseconds between shots
+    public lives = 3; 
 
     // power ups
     private spreadShotActive = false;
     private spreadShotTimer: Phaser.Time.TimerEvent | null = null;
 
+    private rapidShotActive = false;
+    private rapidShotTimer: Phaser.Time.TimerEvent | null = null;
+
+    private speedActive = false;
+    private speedTimer: Phaser.Time.TimerEvent | null = null;
+
     private tryToFire(time: number): boolean {
         if (time < this.nextFireTime) {
             return false;
+        } if (this.rapidShotActive) {
+            this.fireDelay = 200; // faster fire rate when rapid shot is active
         }
 
-        this.nextFireTime = time + FIRE_DELAY;
+        this.nextFireTime = time + this.fireDelay;
         return true;
     }
 
@@ -109,6 +120,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.body!.velocity.normalize().scale(this.speed) // prevent diagonal movement being faster
 
+        if (this.speedActive) {
+            this.body!.velocity.scale(1.5); // increase speed when speed power-up is active
+        }
         // directional shooting
         if (this.keys.UP.isDown && this.tryToFire(time)) {
             this.shoot(-Math.PI / 2);
@@ -147,19 +161,47 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
      }
 
     // power up methods (call them when power up is collected)
-    public activateSpreadShot(): void {
-        this.spreadShotActive = true;
-
-        // if a timer is already running, remove it to reset the duration
-        if (this.spreadShotTimer) {
-            this.spreadShotTimer.remove();
+     private activatePowerUp(
+        currentTimer: Phaser.Time.TimerEvent | null,
+        setActive: (active: boolean) => void,
+        setTimer: (timer: Phaser.Time.TimerEvent | null) => void
+        ): void {
+        setActive(true);
+        
+        if (currentTimer) {
+            currentTimer.remove();
         }
 
-        // set a new timer to deactivate the spread shot after the duration
-        this.spreadShotTimer = this.scene.time.delayedCall(SPREAD_SHOT_DURATION, () => {
-            this.spreadShotActive = false;
-            this.spreadShotTimer = null;
+        const timer = this.scene.time.delayedCall(POWER_UP_DURATION, () => {
+            setActive(false);
+            setTimer(null);
         });
+
+        setTimer(timer);
+    }
+
+    public activateSpreadShot(): void {
+        this.activatePowerUp(
+            this.spreadShotTimer,
+            (active) => this.spreadShotActive = active,
+            (timer) => this.spreadShotTimer = timer
+        );
+    }
+
+    public activateRapidShot(): void {
+        this.activatePowerUp(
+            this.rapidShotTimer,
+            (active) => this.rapidShotActive = active,
+            (timer) => this.rapidShotTimer = timer
+        );
+    }
+
+    public activateSpeed(): void {
+        this.activatePowerUp(
+            this.speedTimer,
+            (active) => this.speedActive = active,
+            (timer) => this.speedTimer = timer
+        );
     }
 }
 
