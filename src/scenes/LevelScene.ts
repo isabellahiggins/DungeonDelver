@@ -114,6 +114,8 @@ export default class LevelScene extends Phaser.Scene {
           this.player.makeGodMode();
           this.sound.play(PLAYER_HURT_KEY);
           if(this.lives <=0){
+			this.sound.stopAll();
+			this.sound.play(PLAYER_HURT_KEY);
                this.scene.start("GameOver");
           }
       }

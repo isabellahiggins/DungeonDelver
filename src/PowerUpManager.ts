@@ -1,4 +1,4 @@
-import type {PowerUpType} from "./PowerUp.ts"
+import type {PowerUpType} from "./PowerUpType.ts"
 
 type TimedPowerUpType = Exclude<PowerUpType, "life"> // life is the only power-up that is not timed
 const POWER_UP_DURATION = 10000 // 10 seconds
