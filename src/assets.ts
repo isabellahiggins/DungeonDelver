@@ -51,3 +51,15 @@ export const PLAYER_HURT_FILE = "assets/sfx/playerHurt.wav";
 //Player Shoot SFX
 export const PLAYER_SHOOT_KEY = "player_shoot";
 export const PLAYER_SHOOT_FILE = "assets/sfx/shootGun.mp3";
+
+//power ups
+export const SPREAD_KEY = "spread";
+export const SPREAD_FILE = "assets/powerUps/spread.png";
+export const LIFE_KEY = "life";
+export const LIFE_FILE = "assets/powerUps/life.png";
+export const RAPID_SHOT_KEY = "rapidShot";
+export const RAPID_SHOT_FILE = "assets/powerUps/rapidshot.png";
+export const SPEED_KEY = "speed";
+export const SPEED_FILE = "assets/powerUps/speed.png";
+export const GHOST_BULLETS_KEY = "ghostBullets";
+export const GHOST_BULLETS_FILE = "assets/powerUps/ghostbullets.png";

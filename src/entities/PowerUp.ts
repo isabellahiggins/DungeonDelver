@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import type {PowerUpType} from "../PowerUp.ts"
+import type {PowerUpType} from "../PowerUpType.ts"
 import{ SPREAD_KEY, LIFE_KEY, RAPID_SHOT_KEY, SPEED_KEY, GHOST_BULLETS_KEY } from "../assets.ts"
 
 export default class PowerUp extends Phaser.Physics.Arcade.Sprite {

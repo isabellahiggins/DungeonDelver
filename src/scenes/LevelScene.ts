@@ -3,10 +3,10 @@ import{ MAP_KEY, MAP_FILE, GROUND_TILESET_NAME,
      GROUND_KEY, GROUND_FILE,DECO_TILESET_NAME,
      DECO_KEY,DECO_FILE,GROUND_LAYER,DECO_LAYER,
 	ENEMY_KEY, ENEMY_FILE, PLAYER_KEY, PLAYER_FILE, BULLET_FILE, BULLET_KEY,
-	MUSIC_KEY,
-	MUSIC_FILE,
-	GAMEOVER_MUSIC_KEY,
-	GAMEOVER_MUSIC_FILE, PLAYER_HURT_KEY, PLAYER_HURT_FILE, PLAYER_SHOOT_KEY, PLAYER_SHOOT_FILE, WIN_MUSIC_KEY, WIN_MUSIC_FILE} from "../assets.ts";
+	MUSIC_KEY,MUSIC_FILE,GAMEOVER_MUSIC_KEY, GAMEOVER_MUSIC_FILE, PLAYER_HURT_KEY, PLAYER_HURT_FILE, PLAYER_SHOOT_KEY, PLAYER_SHOOT_FILE, WIN_MUSIC_KEY, WIN_MUSIC_FILE, 
+     SPREAD_KEY, SPREAD_FILE, LIFE_KEY, LIFE_FILE, RAPID_SHOT_KEY, RAPID_SHOT_FILE, SPEED_KEY, SPEED_FILE, GHOST_BULLETS_KEY, GHOST_BULLETS_FILE} from "../assets.ts";
+import PowerUp from "../entities/PowerUp.ts";
+import  type {PowerUpType} from "../PowerUpType.ts";
 import {EnemySpawner} from "../EnemySpawner.ts";
 import Player from "../entities/Player.ts";
 import { SpawnPosition } from "../SpawnPosition.ts";
@@ -30,6 +30,8 @@ export default class LevelScene extends Phaser.Scene {
      
      private hudText!: Phaser.GameObjects.Text;
      private lives = 3;
+     //powerups
+     private powerUpTypes: PowerUpType[] = ["spread", "life", "rapidShot", "speed"];
      
      constructor(){
           super("LevelScene");
@@ -50,6 +52,11 @@ export default class LevelScene extends Phaser.Scene {
 		  this.load.image(ENEMY_KEY, ENEMY_FILE);
 		  this.load.image(PLAYER_KEY, PLAYER_FILE);
 		  this.load.image(BULLET_KEY, BULLET_FILE);
+            this.load.image(SPREAD_KEY, SPREAD_FILE);
+            this.load.image(LIFE_KEY, LIFE_FILE);
+            this.load.image(RAPID_SHOT_KEY, RAPID_SHOT_FILE);
+            this.load.image(SPEED_KEY, SPEED_FILE);
+            this.load.image(GHOST_BULLETS_KEY, GHOST_BULLETS_FILE);
 		  this.load.audio(MUSIC_KEY, MUSIC_FILE);
 		  this.load.audio(GAMEOVER_MUSIC_KEY, GAMEOVER_MUSIC_FILE);
 		  this.load.audio(PLAYER_HURT_KEY, PLAYER_HURT_FILE);
@@ -112,6 +119,29 @@ export default class LevelScene extends Phaser.Scene {
       }
 
 	killEnemy(enemy: Enemy, bullet: Bullet): void{
+
+           //Chance to spawn powerup and drop on enemy body
+          const dropChance = Phaser.Math.RND.between(1, 100);
+          if (dropChance <= 15){
+               const powerUpType = Phaser.Math.RND.pick(this.powerUpTypes);
+               const pickup = new PowerUp(this, enemy.x, enemy.y, powerUpType);
+
+               this.physics.add.overlap(this.player, pickup, () =>{
+                    if(powerUpType === "life"){
+                         this.lives++;
+                         this.updatehud();
+                    }else if (powerUpType === "spread"){
+                         this.player.activateSpreadShot();
+                    }else if(powerUpType === "rapidShot"){
+                         this.player.activateRapidShot();
+                    }else if(powerUpType === "speed"){
+                         this.player.activateSpeed();
+                    }
+
+                    pickup.destroy();
+               });
+          }
+
 		this.enemySpawner.removeEnemy(enemy);
 		enemy.destroy();
 		bullet.destroy();
