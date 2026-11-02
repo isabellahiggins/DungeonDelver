@@ -100,7 +100,7 @@ export default class LevelScene extends Phaser.Scene {
       }
 
       private updatehud(): void{
-          this.hudText.setText(`Lives: ${this.lives}`);
+          this.hudText.setText(`Wave: ${this.currentWave} / ${this.totalWaves}  |  Enemies Left: ${this.enemySpawner.enemiesLeft()}  |  Lives: ${this.lives}`);
           // updates waves
       }
 
@@ -164,7 +164,7 @@ export default class LevelScene extends Phaser.Scene {
           this.createMap();
 		this.createSpawner();
           this.createPlayer();
-          this.hudText = this.add.text(32, 32, `Lives: ${this.lives}`,{
+          this.hudText = this.add.text(32, 32, `Wave: ${this.currentWave} / ${this.totalWaves}  |  Enemies Left: ${this.enemySpawner.enemiesLeft()}  |  Lives: ${this.lives}`,{
                fontFamily:"Arial",
                fontSize: "50px",
                color: 'white',
@@ -190,7 +190,6 @@ export default class LevelScene extends Phaser.Scene {
           this.waveInProgress = true;
           this.enemySpawner.startWave(this.enemiesThisWave); // starts 12 enemies with increments of 3
           console.log(`[WAVE DEBUG] Started wave ${this.currentWave}/${this.totalWaves} with ${this.enemiesThisWave} enemies.`);
-          this.hudText.setText(`Wave: ${this.currentWave} / ${this.totalWaves}  |  Enemies Left: ${this.enemySpawner.enemiesLeft()}  |  Lives: ${this.lives}`);
      }
 
      override update(time: integer): void{
@@ -215,6 +214,7 @@ export default class LevelScene extends Phaser.Scene {
 			
 			this.time.delayedCall(this.timeBetweenWaves, () => { // buffer between waves
                     this.startWave();
+					this.updatehud();
                });
 		}
 	}
