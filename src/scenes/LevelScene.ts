@@ -27,6 +27,7 @@ export default class LevelScene extends Phaser.Scene {
      private totalWaves = 3;
      private enemiesThisWave = 12;
      private waveInProgress = false;
+	 private enemiesLeft: integer = 0;
      
      private hudText!: Phaser.GameObjects.Text;
      private lives = 3;
@@ -189,12 +190,17 @@ export default class LevelScene extends Phaser.Scene {
      private startWave(): void{
           this.waveInProgress = true;
           this.enemySpawner.startWave(this.enemiesThisWave); // starts 12 enemies with increments of 3
+		  this.enemiesLeft = this.enemySpawner.enemiesLeft();
           console.log(`[WAVE DEBUG] Started wave ${this.currentWave}/${this.totalWaves} with ${this.enemiesThisWave} enemies.`);
      }
 
      override update(time: integer): void{
 	     this.player.update(time);
           this.enemySpawner.moveEnemies(this.player);
+
+			if(this.enemiesLeft != this.enemySpawner.enemiesLeft()){
+				this.updatehud();
+			}
 
           // wave is in progress and all enemies have been killed, start the next wave after a delay
 		if(this.waveInProgress && this.enemySpawner.enemiesLeft() === 0){
