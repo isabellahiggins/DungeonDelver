@@ -90,6 +90,7 @@
     ],
     "packageJson": {
       "dependencies": [
+        "npm:easystarjs@~0.4.4",
         "npm:phaser@^4.2.1"
       ]
     }

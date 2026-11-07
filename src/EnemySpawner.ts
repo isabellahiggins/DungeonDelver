@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import {Enemy} from "./entities/Enemy.ts";
 import {SpawnPosition} from './SpawnPosition.ts';
 import LevelScene from './scenes/LevelScene.ts';
+import {EnemyTypes} from './enemyType.ts';
 
 export class EnemySpawner{
 	private locationArray: SpawnPosition[];
@@ -19,8 +20,9 @@ export class EnemySpawner{
 		for(let index = 0; index < numEnemies; index++){
 			const r = Math.floor(Math.random() * (this.locationArray.length));
 			console.log(r);
-			
-			const enemy = new Enemy(this.scene, this.locationArray[r].getPositionX(), this.locationArray[r].getPositionY());
+
+			const type = Phaser.Math.RND.pick(EnemyTypes);
+			const enemy = new Enemy(this.scene, this.locationArray[r].getPositionX(), this.locationArray[r].getPositionY(), type.speed, type.health);
 			this.toSpawn.push(enemy);
 		}
 

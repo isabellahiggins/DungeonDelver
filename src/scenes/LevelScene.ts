@@ -122,6 +122,10 @@ export default class LevelScene extends Phaser.Scene {
 
 	killEnemy(enemy: Enemy, bullet: Bullet): void{
 
+          bullet.destroy();
+          if(!enemy.shotTook()){
+               return;
+          }
            //Chance to spawn powerup and drop on enemy body
           const dropChance = Phaser.Math.RND.between(1, 100);
           if (dropChance <= 15){
@@ -147,7 +151,6 @@ export default class LevelScene extends Phaser.Scene {
 		this.enemySpawner.removeEnemy(enemy);
 		this.updatehud();
 		enemy.destroy();
-		bullet.destroy();
 	  }
 
 	registerNewEnemies(){
