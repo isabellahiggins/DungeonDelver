@@ -12,6 +12,7 @@ import Player from "../entities/Player.ts";
 import { SpawnPosition } from "../SpawnPosition.ts";
 import Bullet from "../entities/bullet.ts";
 import { Enemy } from "../entities/Enemy.ts";
+import EasyStar from 'easystarjs';
 
 export default class LevelScene extends Phaser.Scene {
      private map!: Phaser.Tilemaps.Tilemap;
@@ -32,6 +33,9 @@ export default class LevelScene extends Phaser.Scene {
      private lives = 3;
      //powerups
      private powerUpTypes: PowerUpType[] = ["spread", "life", "rapidShot", "speed"];
+
+	 // Pathfinding
+	 private easystar!: EasyStar.js;
      
      constructor(){
           super("LevelScene");
@@ -85,12 +89,12 @@ export default class LevelScene extends Phaser.Scene {
 		const width = this.sys.game.canvas.width;
 		const height = this.sys.game.canvas.height;
 
-		const spawn1 : SpawnPosition = new SpawnPosition(width / 2, 0);
-		const spawn2 : SpawnPosition = new SpawnPosition(width, height / 2);
-		const spawn3 : SpawnPosition = new SpawnPosition(width / 2, height);
-		const spawn4 : SpawnPosition = new SpawnPosition(0, height / 2);
+		const spawn1 : SpawnPosition = new SpawnPosition((width -32) / 2, 0);
+		const spawn2 : SpawnPosition = new SpawnPosition((width -32), (height -32) / 2);
+		const spawn3 : SpawnPosition = new SpawnPosition((width -32) / 2, (height -32));
+		const spawn4 : SpawnPosition = new SpawnPosition(0, (height -32) / 2);
 
-		this.enemySpawner = new EnemySpawner(this, spawn1, spawn2, spawn3, spawn4);
+		this.enemySpawner = new EnemySpawner(this, this.easystar, spawn1, spawn2, spawn3, spawn4);
 	 }
 
       private createPlayer(): void{
@@ -119,6 +123,45 @@ export default class LevelScene extends Phaser.Scene {
                this.scene.start("GameOver");
           }
       }
+
+	  private createEasystar(){
+		this.easystar = new EasyStar.js();
+		
+		this.easystar.enableDiagonals();
+		this.easystar.disableCornerCutting();
+
+		var grid: number[][] = [];
+
+		for (let y = 0; y < this.map.height; y++) {
+			const row: number[] = [];
+
+			for (let x = 0; x < this.map.width; x++) {
+				
+				const tile = this.deco.getTileAt(x, y);
+
+				if(tile){
+					row.push(0);
+				}
+				else{
+					row.push(1);
+				}
+			}
+
+			grid.push(row);
+		}
+
+		console.log("Start Of World Print")
+		for (const row of grid) {
+			console.log(row.join(" "));
+		}
+
+		this.easystar.setGrid(grid);
+		console.log("End Of World Print")
+
+		const acceptableTiles: number[] = [1];
+
+		this.easystar.setAcceptableTiles(acceptableTiles);
+	  }
 
 	killEnemy(enemy: Enemy, bullet: Bullet): void{
 
@@ -166,6 +209,7 @@ export default class LevelScene extends Phaser.Scene {
 
      create(): void{
           this.createMap();
+		  this.createEasystar();
 		this.createSpawner();
           this.createPlayer();
           this.hudText = this.add.text(32, 32, `Wave: ${this.currentWave} / ${this.totalWaves}  |  Enemies Left: ${this.enemySpawner.enemiesLeft()}  |  Lives: ${this.lives}`,{
@@ -198,7 +242,11 @@ export default class LevelScene extends Phaser.Scene {
 
      override update(time: integer): void{
 	     this.player.update(time);
-          this.enemySpawner.moveEnemies(this.player);
+		if(this.spawnTime + 250 <= time){
+			this.enemySpawner.updateEnemiesPath(this.player);
+			this.spawnTime = time;
+		}
+		this.enemySpawner.moveEnemies();
 
           // wave is in progress and all enemies have been killed, start the next wave after a delay
 		if(this.waveInProgress && this.enemySpawner.enemiesLeft() === 0){

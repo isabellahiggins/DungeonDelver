@@ -3,6 +3,7 @@ import {Enemy} from "./entities/Enemy.ts";
 import {SpawnPosition} from './SpawnPosition.ts';
 import LevelScene from './scenes/LevelScene.ts';
 import {EnemyTypes} from './enemyType.ts';
+import EasyStar from 'easystarjs';
 
 export class EnemySpawner{
 	private locationArray: SpawnPosition[];
@@ -10,10 +11,12 @@ export class EnemySpawner{
 	private enemies: Enemy[] = [];
 	private toSpawn: Enemy[] = [];
 	private spawner?: Phaser.Time.TimerEvent;
+	private easystar: EasyStar.js;
 
-	constructor(scene: LevelScene, ...locationArray: SpawnPosition[]){
+	constructor(scene: LevelScene, easystar: EasyStar.js, ...locationArray: SpawnPosition[]){
 		this.locationArray = locationArray;
 		this.scene = scene;
+		this.easystar = easystar;
 	}
 
 	private spawnEnemy(numEnemies: integer){
@@ -22,7 +25,7 @@ export class EnemySpawner{
 			console.log(r);
 
 			const type = Phaser.Math.RND.pick(EnemyTypes);
-			const enemy = new Enemy(this.scene, this.locationArray[r].getPositionX(), this.locationArray[r].getPositionY(), type.speed, type.health);
+			const enemy = new Enemy(this.scene, this.locationArray[r].getPositionX(), this.locationArray[r].getPositionY(), type.speed, type.health, this.easystar);
 			this.toSpawn.push(enemy);
 		}
 
@@ -40,6 +43,7 @@ export class EnemySpawner{
 		this.scene.physics.add.existing(currentEnemy);
 		this.enemies.push(currentEnemy)
 		this.scene.registerNewEnemies();
+		currentEnemy.setCollideWorldBounds(true);
 		console.log(this.toSpawn.length)
 		if(this.toSpawn.length == 0){
 			this.spawner?.remove();
@@ -54,9 +58,17 @@ export class EnemySpawner{
 		return this.enemies.length + this.toSpawn.length;
 	}
 
-	moveEnemies(player: Phaser.Physics.Arcade.Sprite){
+	updateEnemiesPath(player: Phaser.Physics.Arcade.Sprite){
 		for(const enemy of this.enemies){
-			enemy.followPlayer(player);
+			enemy.findPath(player);
+		}
+	}
+
+	moveEnemies(){
+		this.easystar.calculate();
+
+		for(const enemy of this.enemies) {
+			enemy.followPlayer();
 		}
 	}
 
