@@ -16,7 +16,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     private godMode = false;
 	private bullets: Bullet[] = [];
     private fireDelay = 400; // milliseconds between shots
-    public lives = 3; 
 
     // power ups
     private spreadShotActive = false;
@@ -55,9 +54,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             );
             this.bullets.push(bullet);
             bullet.shoot(bulletAngle);
-			this.scene.sound.play(PLAYER_SHOOT_KEY, {
-				volume: 0.25
-			});
+            this.scene.sound.play(PLAYER_SHOOT_KEY);
         }
     }
 
@@ -81,7 +78,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene: Scene, x: number, y: number) {
         super(scene, x, y, PLAYER_KEY);
 
-		this.setScale(0.25);
+		this.setScale(0.3);
 
         // add the player to the scene
         scene.add.existing(this);

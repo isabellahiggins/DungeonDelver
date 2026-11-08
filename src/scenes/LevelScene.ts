@@ -31,6 +31,11 @@ export default class LevelScene extends Phaser.Scene {
      
      private hudText!: Phaser.GameObjects.Text;
      private lives = 3;
+
+     // score system
+     private score = 0;
+     private pointsPerKill = 100;
+
      //powerups
      private powerUpTypes: PowerUpType[] = ["spread", "life", "rapidShot", "speed"];
 
@@ -104,7 +109,7 @@ export default class LevelScene extends Phaser.Scene {
       }
 
       private updatehud(): void{
-          this.hudText.setText(`Wave: ${this.currentWave} / ${this.totalWaves}  |  Enemies Left: ${this.enemySpawner.enemiesLeft()}  |  Lives: ${this.lives}`);
+          this.hudText.setText(`Wave: ${this.currentWave} / ${this.totalWaves}  |  Enemies Left: ${this.enemySpawner.enemiesLeft()}  |  Lives: ${this.lives}   |  Score: ${this.score}`);
           // updates waves
       }
 
@@ -117,6 +122,7 @@ export default class LevelScene extends Phaser.Scene {
           this.updatehud();
           this.player.makeGodMode();
           this.sound.play(PLAYER_HURT_KEY);
+          this.pointsPerKill = 100;
           if(this.lives <=0){
 			this.sound.stopAll();
 			this.sound.play(PLAYER_HURT_KEY);
@@ -169,6 +175,11 @@ export default class LevelScene extends Phaser.Scene {
           if(!enemy.shotTook()){
                return;
           }
+
+          // increase score
+          this.score += this.pointsPerKill;
+          this.pointsPerKill += 50; // increase points per kill for next enemy, to be reset when damage is taken or wave is completed
+
            //Chance to spawn powerup and drop on enemy body
           const dropChance = Phaser.Math.RND.between(1, 100);
           if (dropChance <= 15){
@@ -212,7 +223,7 @@ export default class LevelScene extends Phaser.Scene {
 		  this.createEasystar();
 		this.createSpawner();
           this.createPlayer();
-          this.hudText = this.add.text(32, 32, `Wave: ${this.currentWave} / ${this.totalWaves}  |  Enemies Left: ${this.enemySpawner.enemiesLeft()}  |  Lives: ${this.lives}`,{
+          this.hudText = this.add.text(32, 32, `Wave: ${this.currentWave} / ${this.totalWaves}  |  Enemies Left: ${this.enemySpawner.enemiesLeft()}  |  Lives: ${this.lives}   |  Score: ${this.score}`,{
                fontFamily:"Arial",
                fontSize: "50px",
                color: 'white',
@@ -248,6 +259,11 @@ export default class LevelScene extends Phaser.Scene {
 		}
 		this.enemySpawner.moveEnemies();
 
+          if(this.waveInProgress && this.score % 1000 === 0 && this.score !== 0){
+               this.lives++;
+               this.updatehud();
+          }
+
           // wave is in progress and all enemies have been killed, start the next wave after a delay
 		if(this.waveInProgress && this.enemySpawner.enemiesLeft() === 0){
 			
@@ -261,6 +277,7 @@ export default class LevelScene extends Phaser.Scene {
                console.log(`[WAVE DEBUG] Completed wave ${this.currentWave}/${this.totalWaves}. Next wave starts in ${this.timeBetweenWaves} ms.`);
 			this.currentWave++;
                this.enemiesThisWave += 3; // increase the number of enemies for the next wave
+               this.pointsPerKill = 100; // reset points per kill for next wave
 
                this.waveInProgress = false;
 			
