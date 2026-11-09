@@ -3,7 +3,7 @@ import{BULLET_KEY} from "../assets.ts";
 
 export default class Bullet extends Phaser.Physics.Arcade.Sprite {
 
-    private speed =  500;
+    private speed =  1500;
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, BULLET_KEY);
