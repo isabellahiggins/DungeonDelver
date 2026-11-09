@@ -247,6 +247,15 @@ export default class LevelScene extends Phaser.Scene {
           this.startWave();
           this.updatehud();
 
+          this.input.keyboard!.on("keydown-ESC", () => {
+               this.pauseGame();
+          });
+
+     }
+
+     private pauseGame(): void {
+          this.scene.launch("PauseScene");
+          this.scene.pause();
      }
 
      private startWave(): void{
