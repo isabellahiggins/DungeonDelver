@@ -35,6 +35,7 @@ export default class LevelScene extends Phaser.Scene {
      // score system
      private score = 0;
      private pointsPerKill = 100;
+     private pointsThreshold = 1500;
 
      //powerups
      private powerUpTypes: PowerUpType[] = ["spread", "life", "rapidShot", "speed"];
@@ -48,6 +49,9 @@ export default class LevelScene extends Phaser.Scene {
 
      init(): void{
           this.lives = 3;
+          this.score = 0;
+          this.pointsPerKill = 100;
+          this.pointsThreshold = 1500;
           this.spawnTime = 0;
           this.currentWave = 1;
           this.enemiesThisWave = 12;
@@ -259,8 +263,9 @@ export default class LevelScene extends Phaser.Scene {
 		}
 		this.enemySpawner.moveEnemies();
 
-          if(this.waveInProgress && this.score % 1000 === 0 && this.score !== 0){
+          if(this.score >= this.pointsThreshold){
                this.lives++;
+               this.pointsThreshold += 1500;
                this.updatehud();
           }
 
