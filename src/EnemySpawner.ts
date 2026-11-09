@@ -25,7 +25,7 @@ export class EnemySpawner{
 			console.log(r);
 
 			const type = Phaser.Math.RND.pick(EnemyTypes);
-			const enemy = new Enemy(this.scene, this.locationArray[r].getPositionX(), this.locationArray[r].getPositionY(), type.speed, type.health, this.easystar);
+			const enemy = new Enemy(this.scene, this.locationArray[r].getPositionX(), this.locationArray[r].getPositionY(), type.speed, type.health, this.easystar, type.sprite);
 			this.toSpawn.push(enemy);
 		}
 

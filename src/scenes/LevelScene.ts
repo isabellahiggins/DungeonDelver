@@ -58,7 +58,7 @@ export default class LevelScene extends Phaser.Scene {
           this.load.tilemapTiledJSON(MAP_KEY, MAP_FILE);
           this.load.image(GROUND_KEY, GROUND_FILE);
           this.load.image(DECO_KEY, DECO_FILE);
-		  this.load.image(ENEMY_KEY, ENEMY_FILE);
+		  this.load.spritesheet(ENEMY_KEY, ENEMY_FILE, { frameWidth: 18, frameHeight: 18 });
 		  this.load.image(PLAYER_KEY, PLAYER_FILE);
 		  this.load.image(BULLET_KEY, BULLET_FILE);
             this.load.image(SPREAD_KEY, SPREAD_FILE);

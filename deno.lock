@@ -15,6 +15,7 @@
     "jsr:@std/path@1": "1.1.6",
     "jsr:@std/path@^1.1.6": "1.1.6",
     "jsr:@std/streams@^1.2.0": "1.2.0",
+    "npm:easystarjs@~0.4.4": "0.4.4",
     "npm:phaser@^4.2.1": "4.2.1"
   },
   "jsr": {
@@ -73,8 +74,17 @@
     }
   },
   "npm": {
+    "easystarjs@0.4.4": {
+      "integrity": "sha512-ZSt0TkB8xuIXRIrKsM3jkmk1/cZUtyvf0DqOXf6wuKq9slx9UA5kkLtiaWhtmOQFJFKdabbvXwk6RO0znghArQ==",
+      "dependencies": [
+        "heap"
+      ]
+    },
     "eventemitter3@5.0.4": {
       "integrity": "sha512-mlsTRyGaPBjPedk6Bvw+aqbsXDtoAyAzm5MO7JgU+yVRyMQ5O8bD4Kcci7BS85f93veegeCPkL8R4GLClnjLFw=="
+    },
+    "heap@0.2.6": {
+      "integrity": "sha512-MzzWcnfB1e4EG2vHi3dXHoBupmuXNZzx6pY6HldVS55JKKBoq3xOyzfSaZRkJp37HIhEYC78knabHff3zc4dQQ=="
     },
     "phaser@4.2.1": {
       "integrity": "sha512-WUNwCPJpdjvZiuT6SgCfYVW8Qw/3j0jJ4ws7P2QkhFLFu74sbGuyHJcbFueGkY/AYO4Pi47bNQXn1OCJeLX//w==",

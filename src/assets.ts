@@ -16,7 +16,7 @@ export const DECO_LAYER = "Deco";
 
 // Enemy
 export const ENEMY_KEY = "enemy";
-export const ENEMY_FILE = "assets/DebugEnemy.png";
+export const ENEMY_FILE = "assets/enemies.png";
 
 //Player
 export const PLAYER_KEY = "player";
@@ -63,3 +63,4 @@ export const SPEED_KEY = "speed";
 export const SPEED_FILE = "assets/powerUps/speed.png";
 export const GHOST_BULLETS_KEY = "ghostBullets";
 export const GHOST_BULLETS_FILE = "assets/powerUps/ghostbullets.png";
+

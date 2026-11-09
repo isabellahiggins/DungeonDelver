@@ -11,9 +11,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 	private currentPathIndex: number = 0;
 	private isCalculatingPath: boolean = false;
 
-	constructor(scene: Phaser.Scene, x: number, y: number, speed: number = 100, health: number = 3, easystar: EasyStar.js) {
-		super(scene, x, y, ENEMY_KEY);
-		this.setScale(0.25);
+	constructor(scene: Phaser.Scene, x: number, y: number, speed: number = 100, health: number = 3, easystar: EasyStar.js, sprite: number) {
+		super(scene, x, y, ENEMY_KEY, sprite);
+		this.setScale(7);
 		this.speed = speed;
 		this.health = health;
 		this.x = x;
