@@ -54,7 +54,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             );
             this.bullets.push(bullet);
             bullet.shoot(bulletAngle);
-            this.scene.sound.play(PLAYER_SHOOT_KEY);
+            this.scene.sound.play(PLAYER_SHOOT_KEY, {
+				volume: 0.25
+			});
         }
     }
 
