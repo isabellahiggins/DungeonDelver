@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { MUSIC_KEY } from "../assets.ts";
 
 export default class PauseScene extends Phaser.Scene {
     constructor() {
@@ -22,11 +23,26 @@ export default class PauseScene extends Phaser.Scene {
             align: "center"
         }).setOrigin(0.5);
 
+        this.add.text(centreX, centreY + 200, "Restart", {
+            fontFamily: "Arial",
+            fontSize: "32px",
+            color: "#ffffff",
+            backgroundColor: "#444444",
+            padding: { x: 16, y: 8 },
+        }).setOrigin(0.5).setScale(2.5).setInteractive({
+            useHandCursor: true }).on(
+                "pointerdown", () => {
+                this.scene.stop("LevelScene");
+                this.scene.start("LevelScene");
+                this.sound.stopAll();
+            });
+
         this.input.keyboard!.once("keydown-ESC", () => this.resumeGame());
     }
 
     private resumeGame(): void {
         this.scene.resume("LevelScene");
+    
         this.scene.stop();
     }
 }

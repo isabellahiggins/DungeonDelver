@@ -114,7 +114,6 @@ export default class LevelScene extends Phaser.Scene {
 
       private updatehud(): void{
           this.hudText.setText(`Wave: ${this.currentWave} / ${this.totalWaves}  |  Enemies Left: ${this.enemySpawner.enemiesLeft()}  |  Lives: ${this.lives}   |  Score: ${this.score}`);
-          // updates waves
       }
 
       private loseLife(): void{
