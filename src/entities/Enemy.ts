@@ -11,16 +11,34 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 	private currentPathIndex: number = 0;
 	private isCalculatingPath: boolean = false;
 	private knockbackUntil = 0;
+	private maxHealth: number;
+	private healthBar?: Phaser.GameObjects.Rectangle;
 
 	constructor(scene: Phaser.Scene, x: number, y: number, speed: number = 100, health: number = 3, easystar: EasyStar.js, sprite: number) {
 		super(scene, x, y, ENEMY_KEY, sprite);
 		this.setScale(3.3);
 		this.speed = speed;
 		this.health = health;
+		this.maxHealth = health;
 		this.x = x;
 		this.y = y;
 		this.easystar = easystar;
 	}
+
+	override preUpdate(time: number, delta: number): void {
+		super.preUpdate(time, delta);
+		if (!this.healthBar){
+			this.healthBar = this.scene.add.rectangle(0, 0, this.displayWidth, 5, 0xff0000);
+		}
+		this.healthBar.setPosition(this.x, this.y - this.displayHeight / 2- 8);
+		this.healthBar.setSize(this.displayWidth * (this.health / this.maxHealth), 5);
+	}
+
+	override destroy(fromScene?: boolean): void{
+		this.healthBar?.destroy();
+		super.destroy(fromScene);
+	}
+
 
 	public findPath(player: Phaser.Physics.Arcade.Sprite){
 		if(this.isCalculatingPath){
