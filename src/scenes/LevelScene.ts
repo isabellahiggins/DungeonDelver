@@ -5,6 +5,11 @@ import{ MAP_KEY, MAP_FILE, GROUND_TILESET_NAME,
 	ENEMY_KEY, ENEMY_FILE, PLAYER_KEY, PLAYER_FILE, BULLET_FILE, BULLET_KEY,
 	MUSIC_KEY,MUSIC_FILE,GAMEOVER_MUSIC_KEY, GAMEOVER_MUSIC_FILE, PLAYER_HURT_KEY, PLAYER_HURT_FILE, PLAYER_SHOOT_KEY, PLAYER_SHOOT_FILE, WIN_MUSIC_KEY, WIN_MUSIC_FILE, 
      SPREAD_KEY, SPREAD_FILE, LIFE_KEY, LIFE_FILE, RAPID_SHOT_KEY, RAPID_SHOT_FILE, SPEED_KEY, SPEED_FILE, GHOST_BULLETS_KEY, GHOST_BULLETS_FILE} from "../assets.ts";
+	MUSIC_KEY,MUSIC_FILE,GAMEOVER_MUSIC_KEY, GAMEOVER_MUSIC_FILE, PLAYER_HURT_KEY, PLAYER_HURT_FILE, PLAYER_SHOOT_KEY, PLAYER_SHOOT_FILE, WIN_MUSIC_KEY, WIN_MUSIC_FILE,
+     VISION_BLINDNESS_KEY,
+     VISION_BLINDNESS_FILE,
+     POWERUPSSPRITES_FILE,
+     POWERUPSSPRITES_KEY} from "../assets.ts";
 import PowerUp from "../entities/PowerUp.ts";
 import  type {PowerUpType} from "../PowerUpType.ts";
 import {EnemySpawner} from "../EnemySpawner.ts";
@@ -38,7 +43,7 @@ export default class LevelScene extends Phaser.Scene {
      private pointsThreshold = 1500;
 
      //powerups
-     private powerUpTypes: PowerUpType[] = ["spread", "life", "rapidShot", "speed", "knockback", "aoeBomb", "addEnemies"];
+     private powerUpTypes: PowerUpType[] = ["spread", "life", "rapidShot", "speed", "knockback", "aoeBomb", "addEnemies", "visionBlindness", "speedDown", "slowFirerate"];
 
 	 // Pathfinding
 	 private easystar!: EasyStar.js;
@@ -63,13 +68,9 @@ export default class LevelScene extends Phaser.Scene {
           this.load.image(GROUND_KEY, GROUND_FILE);
           this.load.image(DECO_KEY, DECO_FILE);
 		  this.load.spritesheet(ENEMY_KEY, ENEMY_FILE, { frameWidth: 18, frameHeight: 18 });
+            this.load.spritesheet(POWERUPSSPRITES_KEY, POWERUPSSPRITES_FILE, {frameWidth: 18, frameHeight: 18});
 		  this.load.image(PLAYER_KEY, PLAYER_FILE);
 		  this.load.image(BULLET_KEY, BULLET_FILE);
-            this.load.image(SPREAD_KEY, SPREAD_FILE);
-            this.load.image(LIFE_KEY, LIFE_FILE);
-            this.load.image(RAPID_SHOT_KEY, RAPID_SHOT_FILE);
-            this.load.image(SPEED_KEY, SPEED_FILE);
-            this.load.image(GHOST_BULLETS_KEY, GHOST_BULLETS_FILE);
 		  this.load.audio(MUSIC_KEY, MUSIC_FILE);
 		  this.load.audio(GAMEOVER_MUSIC_KEY, GAMEOVER_MUSIC_FILE);
 		  this.load.audio(PLAYER_HURT_KEY, PLAYER_HURT_FILE);
@@ -218,6 +219,10 @@ export default class LevelScene extends Phaser.Scene {
                     } else if(powerUpType === "addEnemies"){
                          this.enemySpawner.addEnemies(8);
                          this.updatehud();
+                    }else if(powerUpType === "visionBlindness"){
+                         this.player.activateBlind();
+                    }else if(powerUpType === "speedDown"){
+                         this.player.activateSpeedDown();
                     }
 
                     pickup.destroy();

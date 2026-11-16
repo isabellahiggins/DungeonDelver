@@ -1,6 +1,6 @@
 import Phaser, { Scene } from 'phaser';
 import Bullet from './bullet.ts';
-import {PLAYER_KEY, PLAYER_SHOOT_KEY} from '../assets.ts';
+import {PLAYER_KEY, PLAYER_SHOOT_KEY, VISION_BLINDNESS_KEY} from '../assets.ts';
 
 
 // power ups
@@ -27,6 +27,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     private speedActive = false;
     private speedTimer: Phaser.Time.TimerEvent | null = null;
 
+    private speedDownActive = false;
+    private speedDownTimer: Phaser.Time.TimerEvent | null = null;
+
+    private slowFireRateActive = false;
+    private slowFireRateTimer: Phaser.Time.TimerEvent | null = null;
+
+    private visionBlindness?: Phaser.GameObjects.Image;
+
     private knockbackActive = false;
     private knockbackTimer: Phaser.Time.TimerEvent | null = null;
     
@@ -34,11 +42,18 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     private tryToFire(time: number): boolean {
         if (time < this.nextFireTime) {
             return false;
-        } if (this.rapidShotActive) {
-            this.fireDelay = 200; // faster fire rate when rapid shot is active
+        } 
+
+        let currentFireDelay = this.fireDelay;
+
+        if (this.rapidShotActive) {
+            currentFireDelay = 200; // faster fire rate when rapid shot is active
+        }
+        if(this.slowFireRateActive){
+            currentFireDelay = 800; //slower fire rate when  slowfirerate is active
         }
 
-        this.nextFireTime = time + this.fireDelay;
+        this.nextFireTime = time + currentFireDelay;
         return true;
     }
 
@@ -131,6 +146,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         if (this.speedActive) {
             this.body!.velocity.scale(1.5); // increase speed when speed power-up is active
         }
+
+        if(this.speedDownActive){
+            this.body!.velocity.scale(0.5); 
+        }
         // directional shooting
         if (this.keys.UP.isDown && this.tryToFire(time)) {
             this.shoot(-Math.PI / 2);
@@ -212,12 +231,48 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         );
     }
 
+    public activateSpeedDown(): void{
+        this.activatePowerUp(
+            this.speedDownTimer,
+            (active) => this.speedDownActive = active,
+            (timer) => this.speedDownTimer = timer
+        );
+    }
+
+    public activateSlowFireRate(): void{
+        this.activatePowerUp(
+            this.slowFireRateTimer,
+            (active) => this.slowFireRateActive = active,
+            (timer) => this.slowFireRateTimer = timer
+        );
+    }
+
+
     public activateKnockback(): void {
         this.activatePowerUp(
             this.knockbackTimer,
             (active) => this.knockbackActive = active,
             (timer) => this.knockbackTimer = timer
         );
+    }
+
+    public activateBlind(): void{
+        if(this.visionBlindness) return; //if player already blinded dont add blind again
+
+        const width = this.scene.sys.game.canvas.width;
+        const height = this.scene.sys.game.canvas.height;
+
+        this.visionBlindness = this.scene.add.image(0,0, VISION_BLINDNESS_KEY)
+        .setOrigin(0,0)
+        .setDisplaySize(width, height)
+        .setScrollFactor(0)
+        .setDepth(999);
+        
+        //how long blindness lasts
+        this.scene.time.delayedCall(5000, () =>{
+            this.visionBlindness?.destroy();
+            this.visionBlindness = undefined;
+        })
     }
 }
 
