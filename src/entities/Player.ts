@@ -27,6 +27,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     private speedActive = false;
     private speedTimer: Phaser.Time.TimerEvent | null = null;
 
+    private knockbackActive = false;
+    private knockbackTimer: Phaser.Time.TimerEvent | null = null;
+    
+
     private tryToFire(time: number): boolean {
         if (time < this.nextFireTime) {
             return false;
@@ -54,6 +58,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             );
             this.bullets.push(bullet);
             bullet.shoot(bulletAngle);
+            if (this.knockbackActive) {
+                bullet.setKnockbackForce(500);
+            }
             this.scene.sound.play(PLAYER_SHOOT_KEY, {
 				volume: 0.25
 			});
@@ -202,6 +209,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.speedTimer,
             (active) => this.speedActive = active,
             (timer) => this.speedTimer = timer
+        );
+    }
+
+    public activateKnockback(): void {
+        this.activatePowerUp(
+            this.knockbackTimer,
+            (active) => this.knockbackActive = active,
+            (timer) => this.knockbackTimer = timer
         );
     }
 }

@@ -10,6 +10,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 	private path: { x: number, y: number }[] = [];
 	private currentPathIndex: number = 0;
 	private isCalculatingPath: boolean = false;
+	private knockbackUntil = 0;
 
 	constructor(scene: Phaser.Scene, x: number, y: number, speed: number = 100, health: number = 3, easystar: EasyStar.js, sprite: number) {
 		super(scene, x, y, ENEMY_KEY, sprite);
@@ -49,6 +50,10 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 	}
 
 	public followPlayer(){
+		if(this.isBeingKnockedBack()){
+			return;
+		}
+
 		if(this.path.length === 0 || this.currentPathIndex >= this.path.length){
 			this.setVelocity(0, 0);
 			return;
@@ -66,4 +71,17 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 		this.health--;
 		return this.health <= 0;
 	}
+
+	public applyKnockback(forceX: number, forceY: number, duration = 250): void {
+	    this.setVelocity(forceX, forceY);
+	    this.knockbackUntil = this.scene.time.now + duration;
+	}
+
+	private isBeingKnockedBack(): boolean {
+	    return this.scene.time.now < this.knockbackUntil;
+	}
+
+	public defeat(): void{
+    	this.health = 0;
+    }
 }

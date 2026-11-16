@@ -38,7 +38,7 @@ export default class LevelScene extends Phaser.Scene {
      private pointsThreshold = 1500;
 
      //powerups
-     private powerUpTypes: PowerUpType[] = ["spread", "life", "rapidShot", "speed"];
+     private powerUpTypes: PowerUpType[] = ["spread", "life", "rapidShot", "speed", "knockback", "aoeBomb"];
 
 	 // Pathfinding
 	 private easystar!: EasyStar.js;
@@ -174,8 +174,20 @@ export default class LevelScene extends Phaser.Scene {
 
 	killEnemy(enemy: Enemy, bullet: Bullet): void{
 
+          const force = bullet.getKnockbackForce();
+
+          if (force > 0) {
+               const knockback = this.physics.velocityFromRotation(
+                    bullet.rotation,
+                    force
+               );
+
+               enemy.applyKnockback(knockback.x, knockback.y);
+          }
+
           bullet.destroy();
-          if(!enemy.shotTook()){
+
+          if (!enemy.shotTook()) {
                return;
           }
 
@@ -199,6 +211,10 @@ export default class LevelScene extends Phaser.Scene {
                          this.player.activateRapidShot();
                     }else if(powerUpType === "speed"){
                          this.player.activateSpeed();
+                    } else if(powerUpType === "knockback"){
+                         this.player.activateKnockback();
+                    } else if(powerUpType === "aoeBomb"){
+                         this.activateAoeBomb();
                     }
 
                     pickup.destroy();
@@ -237,7 +253,7 @@ export default class LevelScene extends Phaser.Scene {
 
           this.deco.setCollisionByProperty({ collision: true });
           this.physics.add.collider(this.player, this.deco);
-		this.registerNewEnemies();
+          this.registerNewEnemies();
 		this.sound.play(MUSIC_KEY, {
 			loop: true,
 			volume: 0.5
@@ -261,6 +277,28 @@ export default class LevelScene extends Phaser.Scene {
           this.waveInProgress = true;
           this.enemySpawner.startWave(this.enemiesThisWave); // starts 12 enemies with increments of 3
           console.log(`[WAVE DEBUG] Started wave ${this.currentWave}/${this.totalWaves} with ${this.enemiesThisWave} enemies.`);
+     }
+
+     private activateAoeBomb(): void {
+          const radius = 250;
+
+          for (const enemy of [...this.enemySpawner.getEnemies()]) {
+               const distance = Phaser.Math.Distance.Between(
+                    this.player.x,
+                    this.player.y,
+                    enemy.x,
+                    enemy.y
+               );
+
+               if (distance <= radius) {
+                    enemy.defeat();
+                    this.enemySpawner.removeEnemy(enemy);
+                    enemy.destroy();
+                    this.score += this.pointsPerKill;
+               }
+          }
+
+          this.updatehud();
      }
 
      override update(time: integer): void{
