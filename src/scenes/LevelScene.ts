@@ -82,8 +82,8 @@ export default class LevelScene extends Phaser.Scene {
 		  this.load.audio(PLAYER_HURT_KEY, PLAYER_HURT_FILE);
             this.load.audio(PLAYER_SHOOT_KEY, PLAYER_SHOOT_FILE);
             this.load.audio(WIN_MUSIC_KEY, WIN_MUSIC_FILE);
-			this.load.image(BARRIER_KEY, BARRIER_FILE);
 			this.load.image(BARRIER_SPRITE_KEY, BARRIER_SPRITE_FILE);
+			this.load.image(VISION_BLINDNESS_KEY, VISION_BLINDNESS_FILE);
      }
 
      private createMap(): void{
