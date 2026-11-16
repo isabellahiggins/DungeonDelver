@@ -1,1 +1,2 @@
-export type PowerUpType = "spread" | "life" | "rapidShot" | "speed" | "ghostBullets" | "knockback" | "aoeBomb"
+export type PowerUpType = "spread" | "life" | "rapidShot" | "speed" |
+"ghostBullets" | "knockback" | "aoeBomb" | "addEnemies"

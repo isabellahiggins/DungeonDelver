@@ -38,7 +38,7 @@ export default class LevelScene extends Phaser.Scene {
      private pointsThreshold = 1500;
 
      //powerups
-     private powerUpTypes: PowerUpType[] = ["spread", "life", "rapidShot", "speed", "knockback", "aoeBomb"];
+     private powerUpTypes: PowerUpType[] = ["spread", "life", "rapidShot", "speed", "knockback", "aoeBomb", "addEnemies"];
 
 	 // Pathfinding
 	 private easystar!: EasyStar.js;
@@ -215,6 +215,9 @@ export default class LevelScene extends Phaser.Scene {
                          this.player.activateKnockback();
                     } else if(powerUpType === "aoeBomb"){
                          this.activateAoeBomb();
+                    } else if(powerUpType === "addEnemies"){
+                         this.enemySpawner.addEnemies(8);
+                         this.updatehud();
                     }
 
                     pickup.destroy();

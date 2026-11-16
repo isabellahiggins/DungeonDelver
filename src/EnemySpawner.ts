@@ -12,6 +12,7 @@ export class EnemySpawner{
 	private toSpawn: Enemy[] = [];
 	private spawner?: Phaser.Time.TimerEvent;
 	private easystar: EasyStar.js;
+	private spawningEnemies = false;
 
 	constructor(scene: LevelScene, easystar: EasyStar.js, ...locationArray: SpawnPosition[]){
 		this.locationArray = locationArray;
@@ -29,12 +30,15 @@ export class EnemySpawner{
 			this.toSpawn.push(enemy);
 		}
 
-		this.spawner = this.scene.time.addEvent({
-			delay: 1000,
-			callback: this.aliveEnemy,
-			callbackScope: this,
-			loop: true
-		});
+		if (!this.spawner || this.spawningEnemies === false) {
+			this.spawningEnemies = true;
+			this.spawner = this.scene.time.addEvent({
+				delay: 1000,
+				callback: this.aliveEnemy,
+				callbackScope: this,
+				loop: true
+			});
+		}
 	}
 
 	aliveEnemy(): void{
@@ -47,10 +51,11 @@ export class EnemySpawner{
 		console.log(this.toSpawn.length)
 		if(this.toSpawn.length == 0){
 			this.spawner?.remove();
+			this.spawningEnemies = false;
 		}
 	}
 
-	startWave(numEnemies: integer){
+	startWave(numEnemies: integer){z
 		this.spawnEnemy(numEnemies);
 	}
 
@@ -87,5 +92,9 @@ export class EnemySpawner{
 		}
 
 		this.enemies = newEnemies;
+	}
+
+	addEnemies(numEnemies: integer): void{
+		this.spawnEnemy(numEnemies);
 	}
 }
