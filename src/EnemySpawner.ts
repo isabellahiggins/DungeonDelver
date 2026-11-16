@@ -55,7 +55,7 @@ export class EnemySpawner{
 		}
 	}
 
-	startWave(numEnemies: integer){z
+	startWave(numEnemies: integer){
 		this.spawnEnemy(numEnemies);
 	}
 

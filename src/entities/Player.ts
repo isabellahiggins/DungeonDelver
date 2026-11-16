@@ -1,6 +1,7 @@
 import Phaser, { Scene } from 'phaser';
 import Bullet from './bullet.ts';
 import {PLAYER_KEY, PLAYER_SHOOT_KEY, VISION_BLINDNESS_KEY} from '../assets.ts';
+import LevelScene from '../scenes/LevelScene.ts';
 
 
 // power ups
@@ -38,6 +39,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     private knockbackActive = false;
     private knockbackTimer: Phaser.Time.TimerEvent | null = null;
     
+	private noOfBarriers = 0;
+	private levelScene: LevelScene;
+	private barrierCooldown = 500;
+	private lastbarrierTime = 0;
 
     private tryToFire(time: number): boolean {
         if (time < this.nextFireTime) {
@@ -97,10 +102,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         DOWN: Phaser.Input.Keyboard.Key,
         LEFT: Phaser.Input.Keyboard.Key,
         RIGHT: Phaser.Input.Keyboard.Key
+		E: Phaser.Input.Keyboard.Key;
     };
     
     constructor(scene: Scene, x: number, y: number) {
         super(scene, x, y, PLAYER_KEY);
+
+		this.levelScene = scene as LevelScene;
 
 		this.setScale(0.2);
 
@@ -112,7 +120,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.setCollideWorldBounds(true);
 
         // set WASD movement keys and arrow shooting keys
-        this.keys = scene.input.keyboard!.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT') as {
+        this.keys = scene.input.keyboard!.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,E') as {
             W: Phaser.Input.Keyboard.Key;
             A: Phaser.Input.Keyboard.Key;
             S: Phaser.Input.Keyboard.Key;
@@ -121,6 +129,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             DOWN: Phaser.Input.Keyboard.Key;
             LEFT: Phaser.Input.Keyboard.Key;
             RIGHT: Phaser.Input.Keyboard.Key;
+			E: Phaser.Input.Keyboard.Key;
         };
     }
 
@@ -166,6 +175,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         if (this.keys.RIGHT.isDown && this.tryToFire(time)) {
             this.shoot(0);
         }
+
+		if(this.keys.E.isDown && this.noOfBarriers > 0 && this.lastbarrierTime <= time){
+			this.levelScene.placeBarrier();
+			this.lastbarrierTime = time + this.barrierCooldown;
+		}
     }
 
     public isGodMode(): boolean{
@@ -274,5 +288,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.visionBlindness = undefined;
         })
     }
+	public addBarriers(amount: integer): void{
+		this.noOfBarriers = this.noOfBarriers + amount;
+	}
+
+	public removeBarrier(){
+		this.noOfBarriers--;
+	}
 }
 

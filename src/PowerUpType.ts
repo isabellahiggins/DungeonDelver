@@ -1,2 +1,2 @@
 export type PowerUpType = "spread" | "life" | "rapidShot" | "speed" |
-"ghostBullets" | "knockback" | "aoeBomb" | "addEnemies" | "speedDown" | "lifeDown" | "visionBlindness" | "slowFirerate"
+"ghostBullets" | "knockback" | "aoeBomb" | "addEnemies" | "speedDown" | "lifeDown" | "visionBlindness" | "slowFirerate" | "barrier"

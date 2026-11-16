@@ -12,5 +12,6 @@ export const PowerUpImages: Record<PowerUpType, number> = {
     slowFirerate: 8,
     aoeBomb: 9,
     knockback: 10,
-    addEnemies: 11
+    addEnemies: 11,
+	barrier: 12
 };

@@ -4,12 +4,15 @@ import{ MAP_KEY, MAP_FILE, GROUND_TILESET_NAME,
      DECO_KEY,DECO_FILE,GROUND_LAYER,DECO_LAYER,
 	ENEMY_KEY, ENEMY_FILE, PLAYER_KEY, PLAYER_FILE, BULLET_FILE, BULLET_KEY,
 	MUSIC_KEY,MUSIC_FILE,GAMEOVER_MUSIC_KEY, GAMEOVER_MUSIC_FILE, PLAYER_HURT_KEY, PLAYER_HURT_FILE, PLAYER_SHOOT_KEY, PLAYER_SHOOT_FILE, WIN_MUSIC_KEY, WIN_MUSIC_FILE, 
-     SPREAD_KEY, SPREAD_FILE, LIFE_KEY, LIFE_FILE, RAPID_SHOT_KEY, RAPID_SHOT_FILE, SPEED_KEY, SPEED_FILE, GHOST_BULLETS_KEY, GHOST_BULLETS_FILE} from "../assets.ts";
-	MUSIC_KEY,MUSIC_FILE,GAMEOVER_MUSIC_KEY, GAMEOVER_MUSIC_FILE, PLAYER_HURT_KEY, PLAYER_HURT_FILE, PLAYER_SHOOT_KEY, PLAYER_SHOOT_FILE, WIN_MUSIC_KEY, WIN_MUSIC_FILE,
+     SPREAD_KEY, SPREAD_FILE, LIFE_KEY, LIFE_FILE, RAPID_SHOT_KEY, RAPID_SHOT_FILE, SPEED_KEY, SPEED_FILE, GHOST_BULLETS_KEY, GHOST_BULLETS_FILE,
      VISION_BLINDNESS_KEY,
      VISION_BLINDNESS_FILE,
      POWERUPSSPRITES_FILE,
-     POWERUPSSPRITES_KEY} from "../assets.ts";
+     POWERUPSSPRITES_KEY,
+	 BARRIER_FILE,
+	 BARRIER_KEY,
+	 BARRIER_SPRITE_FILE,
+	 BARRIER_SPRITE_KEY} from "../assets.ts";
 import PowerUp from "../entities/PowerUp.ts";
 import  type {PowerUpType} from "../PowerUpType.ts";
 import {EnemySpawner} from "../EnemySpawner.ts";
@@ -18,6 +21,7 @@ import { SpawnPosition } from "../SpawnPosition.ts";
 import Bullet from "../entities/bullet.ts";
 import { Enemy } from "../entities/Enemy.ts";
 import EasyStar from 'easystarjs';
+import {Barrier} from "../entities/Barrier.ts";
 
 export default class LevelScene extends Phaser.Scene {
      private map!: Phaser.Tilemaps.Tilemap;
@@ -43,10 +47,12 @@ export default class LevelScene extends Phaser.Scene {
      private pointsThreshold = 1500;
 
      //powerups
-     private powerUpTypes: PowerUpType[] = ["spread", "life", "rapidShot", "speed", "knockback", "aoeBomb", "addEnemies", "visionBlindness", "speedDown", "slowFirerate"];
+     private powerUpTypes: PowerUpType[] = ["spread", "life", "rapidShot", "speed", "knockback", "aoeBomb", "addEnemies", "visionBlindness", "speedDown", "slowFirerate", "barrier"];
 
 	 // Pathfinding
 	 private easystar!: EasyStar.js;
+	 private grid: number[][] = [];
+
      
      constructor(){
           super("LevelScene");
@@ -76,6 +82,8 @@ export default class LevelScene extends Phaser.Scene {
 		  this.load.audio(PLAYER_HURT_KEY, PLAYER_HURT_FILE);
             this.load.audio(PLAYER_SHOOT_KEY, PLAYER_SHOOT_FILE);
             this.load.audio(WIN_MUSIC_KEY, WIN_MUSIC_FILE);
+			this.load.image(BARRIER_KEY, BARRIER_FILE);
+			this.load.image(BARRIER_SPRITE_KEY, BARRIER_SPRITE_FILE);
      }
 
      private createMap(): void{
@@ -140,8 +148,6 @@ export default class LevelScene extends Phaser.Scene {
 		this.easystar.enableDiagonals();
 		this.easystar.disableCornerCutting();
 
-		var grid: number[][] = [];
-
 		for (let y = 0; y < this.map.height; y++) {
 			const row: number[] = [];
 
@@ -157,18 +163,20 @@ export default class LevelScene extends Phaser.Scene {
 				}
 			}
 
-			grid.push(row);
+			this.grid.push(row);
 		}
 
 		console.log("Start Of World Print")
-		for (const row of grid) {
+		for (const row of this.grid) {
 			console.log(row.join(" "));
 		}
-
-		this.easystar.setGrid(grid);
 		console.log("End Of World Print")
 
-		const acceptableTiles: number[] = [1];
+		this.easystar.setGrid(this.grid);
+
+		const acceptableTiles: number[] = [1, 2];
+
+		this.easystar.setTileCost(2, 10000);
 
 		this.easystar.setAcceptableTiles(acceptableTiles);
 	  }
@@ -223,6 +231,8 @@ export default class LevelScene extends Phaser.Scene {
                          this.player.activateBlind();
                     }else if(powerUpType === "speedDown"){
                          this.player.activateSpeedDown();
+                    }else if(powerUpType === "barrier"){
+                         this.player.addBarriers(4);
                     }
 
                     pickup.destroy();
@@ -308,6 +318,25 @@ export default class LevelScene extends Phaser.Scene {
 
           this.updatehud();
      }
+	 placeBarrier(): void{
+		var playerGridx = Math.floor(this.player.x / 64);
+		var playerGridy = Math.floor(this.player.y / 64);
+
+		var barrier: Barrier = new Barrier(this, playerGridx * 64 + 32, playerGridy * 64 + 32);
+
+		for (let y = 0; y < this.map.height; y++) {
+			for (let x = 0; x < this.map.width; x++) {
+				if(x == playerGridx && y == playerGridy && this.grid[y][x] != 2){
+					this.grid[y][x] = 2;
+					this.add.existing(barrier);
+					this.physics.add.existing(barrier);
+					this.player.removeBarrier();
+				}
+			}
+		}
+
+		this.easystar.setGrid(this.grid);
+	 }
 
      override update(time: integer): void{
 	     this.player.update(time);
@@ -315,6 +344,7 @@ export default class LevelScene extends Phaser.Scene {
 			this.enemySpawner.updateEnemiesPath(this.player);
 			this.spawnTime = time;
 		}
+
 		this.enemySpawner.moveEnemies();
 
           if(this.score >= this.pointsThreshold){
