@@ -4,13 +4,10 @@ import{ MAP_KEY, MAP_FILE, GROUND_TILESET_NAME,
      DECO_KEY,DECO_FILE,GROUND_LAYER,DECO_LAYER,
 	ENEMY_KEY, ENEMY_FILE, PLAYER_KEY, PLAYER_FILE, BULLET_FILE, BULLET_KEY,
 	MUSIC_KEY,MUSIC_FILE,GAMEOVER_MUSIC_KEY, GAMEOVER_MUSIC_FILE, PLAYER_HURT_KEY, PLAYER_HURT_FILE, PLAYER_SHOOT_KEY, PLAYER_SHOOT_FILE, WIN_MUSIC_KEY, WIN_MUSIC_FILE, 
-     SPREAD_KEY, SPREAD_FILE, LIFE_KEY, LIFE_FILE, RAPID_SHOT_KEY, RAPID_SHOT_FILE, SPEED_KEY, SPEED_FILE, GHOST_BULLETS_KEY, GHOST_BULLETS_FILE,
      VISION_BLINDNESS_KEY,
      VISION_BLINDNESS_FILE,
      POWERUPSSPRITES_FILE,
      POWERUPSSPRITES_KEY,
-	 BARRIER_FILE,
-	 BARRIER_KEY,
 	 BARRIER_SPRITE_FILE,
 	 BARRIER_SPRITE_KEY} from "../assets.ts";
 import PowerUp from "../entities/PowerUp.ts";
@@ -147,6 +144,8 @@ export default class LevelScene extends Phaser.Scene {
 		
 		this.easystar.enableDiagonals();
 		this.easystar.disableCornerCutting();
+
+		this.grid = [];
 
 		for (let y = 0; y < this.map.height; y++) {
 			const row: number[] = [];
@@ -318,6 +317,7 @@ export default class LevelScene extends Phaser.Scene {
 
           this.updatehud();
      }
+
 	 placeBarrier(): void{
 		var playerGridx = Math.floor(this.player.x / 64);
 		var playerGridy = Math.floor(this.player.y / 64);
