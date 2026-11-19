@@ -52,6 +52,14 @@ export const PLAYER_HURT_FILE = "assets/sfx/playerHurt.wav";
 export const PLAYER_SHOOT_KEY = "player_shoot";
 export const PLAYER_SHOOT_FILE = "assets/sfx/shootGun.mp3";
 
+//Enemy hurt SFX
+export const ENEMY_HURT_KEY = "enemy_hurt";
+export const ENEMY_HURT_FILE = "assets/sfx/enemyHurt.wav";
+
+//Power up Pickup SFX
+export const POWERUP_SFX = "pickup_sfx";
+export const POWERUP_SFX_FILE = "assets/sfx/pickUp.wav";
+
 //power ups
 export const POWERUPSSPRITES_KEY = "powerUps";
 export const POWERUPSSPRITES_FILE = "assets/powerUps/powerUps.png";

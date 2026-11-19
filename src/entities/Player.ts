@@ -188,6 +188,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
      public makeGodMode(): void{
           this.godMode = true;
+          this.setTint(0xff0000);
           this.scene.tweens.add({
             targets: this,
             alpha: 0.15,
@@ -197,6 +198,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             onComplete: () =>{
                 this.setAlpha(1);
                 this.godMode = false;
+                this.clearTint();
             }
           })
      }

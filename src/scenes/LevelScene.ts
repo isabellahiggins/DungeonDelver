@@ -9,7 +9,7 @@ import{ MAP_KEY, MAP_FILE, GROUND_TILESET_NAME,
      POWERUPSSPRITES_FILE,
      POWERUPSSPRITES_KEY,
 	 BARRIER_SPRITE_FILE,
-	 BARRIER_SPRITE_KEY} from "../assets.ts";
+	 BARRIER_SPRITE_KEY, ENEMY_HURT_FILE, ENEMY_HURT_KEY, POWERUP_SFX, POWERUP_SFX_FILE} from "../assets.ts";
 import PowerUp from "../entities/PowerUp.ts";
 import  type {PowerUpType} from "../PowerUpType.ts";
 import {EnemySpawner} from "../EnemySpawner.ts";
@@ -70,17 +70,19 @@ export default class LevelScene extends Phaser.Scene {
           this.load.tilemapTiledJSON(MAP_KEY, MAP_FILE);
           this.load.image(GROUND_KEY, GROUND_FILE);
           this.load.image(DECO_KEY, DECO_FILE);
-		  this.load.spritesheet(ENEMY_KEY, ENEMY_FILE, { frameWidth: 18, frameHeight: 18 });
-            this.load.spritesheet(POWERUPSSPRITES_KEY, POWERUPSSPRITES_FILE, {frameWidth: 18, frameHeight: 18});
-		  this.load.image(PLAYER_KEY, PLAYER_FILE);
-		  this.load.image(BULLET_KEY, BULLET_FILE);
-		  this.load.audio(MUSIC_KEY, MUSIC_FILE);
-		  this.load.audio(GAMEOVER_MUSIC_KEY, GAMEOVER_MUSIC_FILE);
-		  this.load.audio(PLAYER_HURT_KEY, PLAYER_HURT_FILE);
-            this.load.audio(PLAYER_SHOOT_KEY, PLAYER_SHOOT_FILE);
-            this.load.audio(WIN_MUSIC_KEY, WIN_MUSIC_FILE);
-			this.load.image(BARRIER_SPRITE_KEY, BARRIER_SPRITE_FILE);
-			this.load.image(VISION_BLINDNESS_KEY, VISION_BLINDNESS_FILE);
+		this.load.spritesheet(ENEMY_KEY, ENEMY_FILE, { frameWidth: 18, frameHeight: 18 });
+          this.load.spritesheet(POWERUPSSPRITES_KEY, POWERUPSSPRITES_FILE, {frameWidth: 18, frameHeight: 18});
+		this.load.image(PLAYER_KEY, PLAYER_FILE);
+		this.load.image(BULLET_KEY, BULLET_FILE);
+		this.load.audio(MUSIC_KEY, MUSIC_FILE);
+		this.load.audio(GAMEOVER_MUSIC_KEY, GAMEOVER_MUSIC_FILE);
+		this.load.audio(PLAYER_HURT_KEY, PLAYER_HURT_FILE);
+          this.load.audio(PLAYER_SHOOT_KEY, PLAYER_SHOOT_FILE);
+          this.load.audio(WIN_MUSIC_KEY, WIN_MUSIC_FILE);
+          this.load.audio(ENEMY_HURT_KEY, ENEMY_HURT_FILE);
+          this.load.audio(POWERUP_SFX, POWERUP_SFX_FILE);
+		this.load.image(BARRIER_SPRITE_KEY, BARRIER_SPRITE_FILE);
+		this.load.image(VISION_BLINDNESS_KEY, VISION_BLINDNESS_FILE);
      }
 
      private createMap(): void{
@@ -210,6 +212,7 @@ export default class LevelScene extends Phaser.Scene {
                const pickup = new PowerUp(this, enemy.x, enemy.y, powerUpType);
 
                this.physics.add.overlap(this.player, pickup, () =>{
+                    this.sound.play(POWERUP_SFX);
                     if(powerUpType === "life"){
                          this.lives++;
                          this.updatehud();
