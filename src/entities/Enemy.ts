@@ -87,7 +87,19 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
 	public shotTook(): boolean{
 		this.health--;
+		if(this.health > 0){
+			this.damageFlash();
+		}
 		return this.health <= 0;
+	}
+
+	private damageFlash(): void{
+		this.setTint(0xff0000);
+		this.scene.time.delayedCall(100, ()=>{
+			if(this.active){
+				this.clearTint();
+			}
+		})
 	}
 
 	public applyKnockback(forceX: number, forceY: number, duration = 250): void {
